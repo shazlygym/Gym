@@ -10,7 +10,8 @@ export default function Login() {
     password: "",
   });
 
-  const navigate = useNavigate(); // 👈 للتنقل بعد تسجيل الدخول بنجاح
+  const [loading, setLoading] = useState(false); // حالة التحميل
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -20,20 +21,15 @@ export default function Login() {
   };
 
   const handleSubmit = async () => {
-  
+    setLoading(true); // بدء التحميل
 
     try {
-      // 🔗 استبدل الرابط بعنوان الـ backend تبعك
       const res = await axios.post(`${apiUrl}/login`, formData, {
-        withCredentials: true, // 👈 ضروري لتفعيل الكوكيز
+        withCredentials: true,
       });
-      
 
       if (!res.data.error) {
-        // ممكن تخزن التوكن أو بيانات المستخدم
         localStorage.setItem("user", JSON.stringify(res.data.user));
-        // توجه المستخدم للصفحة الرئيسية مثلاً
-        
         navigate(`/Profile/${formData.mobileNumber}`);
       } else {
         alert(res.data.message || "بيانات الدخول غير صحيحة");
@@ -42,16 +38,20 @@ export default function Login() {
       console.error("خطأ في تسجيل الدخول:", err);
       alert("حدث خطأ أثناء تسجيل الدخول");
     }
+
+    setLoading(false); // انتهاء التحميل
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <h3 className="text-2xl font-semibold mb-6 text-center text-red">تسجيل الدخول</h3>
+        <h3 className="text-2xl font-semibold mb-6 text-center text-red">
+          تسجيل الدخول
+        </h3>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium"> رقم الموبايل</label>
+            <label className="block text-sm font-medium">رقم الموبايل</label>
             <input
               type="text"
               name="mobileNumber"
@@ -59,7 +59,7 @@ export default function Login() {
               onChange={handleChange}
               required
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-              placeholder="name@example.com"
+              placeholder="0790000000"
             />
           </div>
 
@@ -77,13 +77,15 @@ export default function Login() {
           </div>
 
           <button
-            onClick={()=>handleSubmit()}
-            className="w-full py-2 rounded-md text-white font-semibold bg-red hover:bg-red focus:outline-none focus:ring-2 focus:ring-red"
+            onClick={handleSubmit}
+            disabled={loading}
+            className={`w-full py-2 rounded-md text-white font-semibold 
+            ${loading ? "bg-gray-400" : "bg-red hover:bg-red"} 
+            focus:outline-none focus:ring-2 focus:ring-red`}
           >
-            دخول
+            {loading ? "جاري الدخول..." : "دخول"}
           </button>
         </div>
-
       </div>
     </div>
   );
