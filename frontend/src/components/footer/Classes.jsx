@@ -9,20 +9,25 @@ function Classes() {
         حصصنا
       </h4>
       <ul className="space-y-5">
+     
+
+
+
+
         <li>
-          <Link className={linkStyles}>حصص اللياقة البدنية</Link>
+          <Link className={linkStyles}>   Fitness</Link>
         </li>
         <li>
-          <Link className={linkStyles}>حصص الأيروبيك</Link>
+          <Link className={linkStyles}> Full body</Link>
         </li>
         <li>
-          <Link className={linkStyles}>حصص التأمل</Link>
+          <Link className={linkStyles}> Upper_ Lower</Link>
         </li>
         <li>
-          <Link className={linkStyles}>آلات الرشاقة</Link>
+          <Link className={linkStyles}> Push_pull_Legs</Link>
         </li>
         <li>
-          <Link className={linkStyles}>قوة الجسم الكاملة</Link>
+          <Link className={linkStyles}>  Pro split</Link>
         </li>
       </ul>
     </div>
