@@ -7,7 +7,7 @@ function Title() {
       <SecondaryHeading>خطة الأسعار</SecondaryHeading>
       <TertiaryHeading>خطط أسعار حصرية</TertiaryHeading>
       <p className="mx-auto max-w-[50ch] font-medium text-gray-300">
-        في <b>Gymat</b>، نقدم لك أفضل الخطط لمساعدتك على الوصول إلى أهدافك
+        في <b>Eagle Gym</b>، نقدم لك أفضل الخطط لمساعدتك على الوصول إلى أهدافك
         اللياقية بطريقة منظمة وفعّالة.
       </p>
     </div>
