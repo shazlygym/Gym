@@ -162,27 +162,44 @@ const Profile = () => {
         </h2>
 
         {user.videos && user.videos.length > 0 ? (
-          <div className="grid md:grid-cols-2 gap-6">
-            {user.videos.map((videoUrl, index) => {
-              const embedUrl = videoUrl.replace("watch?v=", "embed/");
-              return (
-                <div key={index} className="rounded-lg overflow-hidden shadow-md">
-                  <iframe
-                    className="w-full h-64"
-                    src={embedUrl}
-                    title={`تمرين ${index + 1}`}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="text-center text-gray-500 text-lg">
-            لا توجد فيديوهات حالياً
-          </p>
-        )}
+  <div className="grid md:grid-cols-2 gap-6">
+    {user.videos.map((videoUrl, index) => {
+      let videoId = "";
+
+      // رابط عادي watch?v=
+      if (videoUrl.includes("watch?v=")) {
+        videoId = videoUrl.split("watch?v=")[1].split("&")[0];
+      }
+
+      // رابط youtu.be
+      else if (videoUrl.includes("youtu.be/")) {
+        videoId = videoUrl.split("youtu.be/")[1].split("?")[0];
+      }
+
+      // رابط shorts
+      else if (videoUrl.includes("shorts/")) {
+        videoId = videoUrl.split("shorts/")[1].split("?")[0];
+      }
+
+      const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+
+      return (
+        <div key={index} className="rounded-lg overflow-hidden shadow-md">
+          <iframe
+            className="w-full h-64"
+            src={embedUrl}
+            title={`تمرين ${index + 1}`}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+      );
+    })}
+  </div>
+) : (
+  <p className="text-center text-gray-500 text-lg">لا توجد فيديوهات حالياً</p>
+)}
+
 
         {/* شرح الفيديوهات (comment) */}
         {user.comment && (

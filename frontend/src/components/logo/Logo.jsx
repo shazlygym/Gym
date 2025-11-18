@@ -7,7 +7,7 @@ function Logo({ height = "h-20", size = "w-full", type = "white" }) {
     <Link to="/" className="focus inline-block">
       <img
         src={type === "black" ? logoBlack : logoWhite}
-        alt="gymate logo"
+        alt="Eagle logo"
         className={`${height} relative ${size}`}
       />
     </Link>

@@ -23,17 +23,17 @@ function NavLinks({ onToggleNav, styles }) {
       </li> */}
       <li>
         <Link to="/pricing" className={linkStyles} onClick={onToggleNav}>
-          الأسعار
+          الباقات
         </Link>
       </li>
       <li>
         <Link to="/classes" className={linkStyles} onClick={onToggleNav}>
-          الفصول
+          خدماتنا
         </Link>
       </li>
       <li>
         <Link to="/protiens" className={linkStyles} onClick={onToggleNav}>
-          البروتينات
+          منجاتنا
         </Link>
       </li>
       {/* <li>

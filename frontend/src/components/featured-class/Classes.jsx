@@ -15,7 +15,6 @@ function Classes() {
         ></div>
         <div className="absolute bottom-0 z-10 mb-5 ml-5 cursor-text space-y-2 text-white">
           <h4 className="text-3xl font-bold"> الجري</h4>
-          <p className="bg-red px-3 py-0.5">الأربعاء: 9:00 صباحًا - 10:00 صباحًا</p>
         </div>
       </div>
   
@@ -28,9 +27,7 @@ function Classes() {
         ></div>
         <div className="absolute bottom-0 z-10 mb-5 ml-5 cursor-text space-y-2 text-white">
           <h4 className="text-3xl font-bold">الكاراتيه</h4>
-          <p className="whitespace-nowrap bg-red px-3 py-0.5">
-            الجمعة: 10:00 صباحًا - 11:00 صباحًا
-          </p>
+       
         </div>
       </div>
   
@@ -43,9 +40,7 @@ function Classes() {
         ></div>
         <div className="absolute bottom-0 z-10 mb-5 ml-5 cursor-text space-y-2 text-white">
           <h4 className="text-3xl font-bold">رفع الأثقال</h4>
-          <p className="whitespace-nowrap bg-red px-3 py-0.5">
-            السبت: 9:00 صباحًا - 10:00 صباحًا
-          </p>
+        
         </div>
       </div>
   
@@ -58,9 +53,7 @@ function Classes() {
         ></div>
         <div className="absolute bottom-0 z-10 mb-5 ml-5 cursor-text space-y-2 text-white">
           <h4 className="text-3xl font-bold">التأمل</h4>
-          <p className="whitespace-nowrap bg-red px-3 py-0.5">
-            الجمعة: 1:00 ظهرًا - 2:00 ظهرًا
-          </p>
+         
         </div>
       </div>
   
@@ -73,9 +66,7 @@ function Classes() {
         ></div>
         <div className="absolute bottom-0 z-10 mb-5 ml-5 cursor-text space-y-2 text-white">
           <h4 className="text-3xl font-bold">الفنون القتالية</h4>
-          <p className="whitespace-nowrap bg-red px-3 py-0.5">
-            الأحد: 6:00 مساءً - 7:00 مساءً
-          </p>
+        
         </div>
       </div>
   
@@ -88,7 +79,6 @@ function Classes() {
         ></div>
         <div className="absolute bottom-0 z-10 mb-5 ml-5 cursor-text space-y-2 text-white">
           <h4 className="text-3xl font-bold">التمارين الرياضية</h4>
-          <p className="bg-red px-3 py-0.5">الاثنين: 4:00 مساءً - 5:00 مساءً</p>
         </div>
       </div>
     </div>

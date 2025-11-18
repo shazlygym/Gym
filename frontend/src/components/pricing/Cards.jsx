@@ -15,19 +15,19 @@ function Cards() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
           <h4 className="absolute bottom-5 left-1/2 -translate-x-1/2 text-xl font-bold text-white bg-red/90 px-6 py-2 rounded-full">
-            المبتدئين
+          BASIC
           </h4>
         </div>
         <div className="flex flex-col items-center p-8 space-y-6">
           <h5 className="text-gray-400 text-xl">
-            <span className="text-6xl font-bold text-black">$39</span> / شهر
+            <span className="text-4xl font-bold text-black">175 جنيه</span> / شهر
           </h5>
           <ul className="space-y-3 text-gray-600 text-center">
-            <li>🧘 تمارين حرة</li>
-            <li>🏋️ لياقة بدنية</li>
-            <li>🥗 فقدان الوزن</li>
-            <li>👨‍🏫 مدرب شخصي</li>
-            <li>🚴 ركوب الدراجة</li>
+
+
+
+            <li>  برنامج عام</li>
+            <li> برنامج تدريبي ثابت</li>
           </ul>
       
         </div>
@@ -43,20 +43,24 @@ function Cards() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
           <h4 className="absolute bottom-5 left-1/2 -translate-x-1/2 text-xl font-bold text-black bg-white/80 px-6 py-2 rounded-full">
-            الخطة الذهبية
+          TRANSFORM
+            BASIC
           </h4>
         </div>
         <div className="flex flex-col items-center p-8 space-y-6">
           <h5 className="text-black text-xl">
-            <span className="text-6xl font-bold">$59</span> / شهر
+            <span className="text-4xl font-bold">210 جنيه</span> / شهر
           </h5>
           <ul className="space-y-3 text-black/80 text-center font-medium">
-            <li>🔥 تمارين متقدمة</li>
-            <li>💪 تدريب خاص</li>
-            <li>🥗 نظام غذائي</li>
-            <li>🏋️ مدرب خبير</li>
-            <li>🎯 خطة أسبوعية</li>
+
+
+            <li>  برنامج تدريب حسب الهدف</li>
+            <li>متابعة غذائية أسبوعية</li>
+            <li>جلسة توجيه في بداية كل شهر</li>
+            <li>خصم 20% على اشتراك اللوكر  </li>
+            <li>خصم 20٪ على القهوه</li>
           </ul>
+
        
         </div>
         <div className="absolute top-3 right-3 bg-black text-white px-3 py-1 rounded-full text-sm font-bold">
@@ -74,19 +78,25 @@ function Cards() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
           <h4 className="absolute bottom-5 left-1/2 -translate-x-1/2 text-xl font-bold text-white bg-red/90 px-6 py-2 rounded-full">
-            متقدم
+          ELITE
+          TRANSFORM
           </h4>
         </div>
         <div className="flex flex-col items-center p-8 space-y-6">
           <h5 className="text-gray-400 text-xl">
-            <span className="text-6xl font-bold text-black">$69</span> / شهر
+            <span className="text-4xl font-bold text-black">250 جنية</span> / شهر
           </h5>
           <ul className="space-y-3 text-gray-600 text-center">
-            <li>🏋️ تمارين احترافية</li>
-            <li>🔥 تحديات أسبوعية</li>
-            <li>🥗 تغذية مخصصة</li>
-            <li>👨‍🏫 مدرب شخصي</li>
-            <li>🚴 ركوب الدراجة</li>
+
+         
+
+            <li> مدرب شخصي </li>
+            <li> نظام غذائي كامل شهري</li>
+            <li> تقييم لياقة أسبوعي</li>
+            <li>تواصل ومتابعة يومية</li>
+            <li>قياس انبودي يدوي اسبوعي  </li>
+            <li>خصم 50% على اللوكر</li>
+            <li>خصم 50% على القهوة</li>
           </ul>
        
         </div>

@@ -2,7 +2,7 @@ import {
   FaFacebookF,
   FaInstagram,
   FaTiktok,
-  FaYoutube,
+  FaWhatsapp,
 } from "react-icons/fa6";
 
 const linkStyles = `focus rounded-full bg-gray-50 p-4 text-gray-400 hover:bg-red hover:text-white transition-colors duration-300`;
@@ -40,6 +40,15 @@ function SocialLinks() {
         <FaTiktok />
       </a>
 
+      {/* WhatsApp */}
+      <a
+      href="https://wa.me/201124045247"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={linkStyles}
+      >
+        <FaWhatsapp />
+      </a>
     </ul>
   );
 }

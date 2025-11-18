@@ -1,4 +1,4 @@
-import { FaTiktok, FaInstagram, FaSquareFacebook } from "react-icons/fa6";
+import { FaTiktok, FaInstagram, FaSquareFacebook  ,FaWhatsapp } from "react-icons/fa6";
 
 function Share() {
   return (
@@ -33,6 +33,15 @@ function Share() {
         >
           <FaSquareFacebook className="h-auto w-7 rotate-90" />
         </a>
+          {/* WhatsApp */}
+              <a
+                  href="https://wa.me/201124045247"
+                target="_blank"
+                rel="noopener noreferrer"
+                 className="transition-colors duration-300 hover:text-red"
+              >
+                <FaWhatsapp className="h-auto w-7 rotate-90" />
+              </a>
       </div>
 
       <div className="h-0.5 w-12 bg-red"></div>
