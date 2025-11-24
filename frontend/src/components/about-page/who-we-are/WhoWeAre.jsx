@@ -14,7 +14,6 @@ function WhoWeAre() {
 
           <List />
 
-          <TertiaryButton to="/contact">تواصل معنا</TertiaryButton>
         </div>
       </div>
     </section>
