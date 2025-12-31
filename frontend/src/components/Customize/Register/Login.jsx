@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
@@ -10,6 +11,7 @@ export default function Login() {
     password: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false); // حالة التحميل
   const navigate = useNavigate();
 
@@ -24,7 +26,7 @@ export default function Login() {
     setLoading(true); // بدء التحميل
 
     try {
-      const res = await axios.post(`${apiUrl}/login`, formData, {
+      const res = await axios.post(`${apiUrl}/Login`, formData, {
         withCredentials: true,
       });
 
@@ -65,15 +67,24 @@ export default function Login() {
 
           <div>
             <label className="block text-sm font-medium">كلمة المرور</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
-              placeholder="********"
-            />
+            <div className="relative mt-1">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
+                placeholder="********"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-red"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
 
           <button

@@ -1,12 +1,22 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FaBars, FaRegUser, FaChartBar, FaPlus } from "react-icons/fa6";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
 function NavButtons({ onToggleNav, onToggleSidebar }) {
+  const [user, setUser] = useState(null);
+  const location = useLocation();
 
-  
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    } else {
+      setUser(null);
+    }
+  }, [location]);
+
 
   const btnStyles = `hover:text-red text-white transition-colors duration-300 focus`;
 
@@ -18,7 +28,7 @@ function NavButtons({ onToggleNav, onToggleSidebar }) {
 
       
 
-      <Link to="/Login" className={btnStyles}>
+      <Link to={user ? `/Profile/${user.mobileNumber}` : "/Login"} className={btnStyles}>
         <FaRegUser className="h-6 w-6" />
       </Link>
 
