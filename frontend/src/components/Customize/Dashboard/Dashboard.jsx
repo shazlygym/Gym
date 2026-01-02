@@ -149,6 +149,7 @@ const Dashboard = () => {
       <table className="w-full table-auto border-collapse">
         <thead>
           <tr className="bg-red text-white">
+<<<<<<< HEAD
             <th className="px-1 py-3 text-right">الاسم</th>
             <th className="px-1 py-3 text-right">الإيميل</th>
             <th className="px-1 py-3 text-right">الرقم التعريفي</th>
@@ -159,11 +160,22 @@ const Dashboard = () => {
             <th className="px-1 py-3 text-center">  اخر زيارة</th>
             <th className="px-1 py-3 text-center"> اسم الباقة</th>
             <th className="px-1 py-3 text-center">الإجراءات</th>
+=======
+            <th className="p-4 text-right">الاسم</th>
+            <th className="p-4 text-right">الإيميل</th>
+            <th className="p-4 text-right">الرقم التعريفي</th>
+            <th className="p-4 text-right">الرقم</th>
+            <th className="p-4 text-right">تاريخ التسجيل</th>
+            <th className="p-4 text-center">عدد الأيام</th>
+            <th className="p-4 text-center">الأيام المستخدمة</th>
+            <th className="p-4 text-center">الإجراءات</th>
+>>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
           </tr>
         </thead>
         <tbody>
           {currentUsers.map((user) => (
             <tr key={user._id} className="border-b hover:bg-gray-50 transition">
+<<<<<<< HEAD
               <td className="px-1 py-3">{user.name}</td>
               <td className="px-1 py-3 break-words">{user.email}</td>
               <td className="px-1 py-3 break-words">{user.seq}</td>
@@ -182,6 +194,18 @@ const Dashboard = () => {
 
               <td className="px-1 py-3 text-center">{user.videosName}</td>
               <td className="px-1 py-3 flex flex-wrap justify-center gap-2">
+=======
+              <td className="p-4">{user.name}</td>
+              <td className="p-4 break-words">{user.email}</td>
+              <td className="p-4 break-words">{user.seq}</td>
+              <td className="p-4">{user.mobileNumber}</td>
+              <td className="p-4">
+                {new Date(user.joinDate).toLocaleDateString("ar-EG")}
+              </td>
+              <td className="p-4 text-center">{user.totalDays}</td>
+              <td className="p-4 text-center">{user.usedDays}</td>
+              <td className="p-4 flex flex-wrap justify-center gap-2">
+>>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
                 <Link to={`/EditMember/${user._id}`}>
                   <button className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm">
                     تعديل

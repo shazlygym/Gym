@@ -13,6 +13,7 @@ const OnxyMessaging = require('onxy-messaging');
 
 exports.signupUser = async (req, res) => {
   try {
+<<<<<<< HEAD
     const { name, email, password, mobileNumber, seq, videosName, videos } = req.body;
 
     // التحقق من المدخلات
@@ -20,22 +21,46 @@ exports.signupUser = async (req, res) => {
       return res.status(400).json({ error: "جميع الحقول مطلوبة" });
     }
 
+=======
+    const { name, email, password, mobileNumber } = req.body;
+
+    // التحقق من المدخلات
+    if (!name || !password || !mobileNumber) {
+      return res.status(400).json({ error: "جميع الحقول مطلوبة" });
+    }
+
+
+    // 🔍 الحصول على أعلى رقم seq حالي من المستخدمين
+    const lastUser = await User.findOne().sort({ seq: -1 }); // 👈 يرتب من الأكبر للأصغر
+    const nextSeq = lastUser ? lastUser.seq + 1 : 1; // 👈 إذا ما في مستخدمين، يبدأ من 1
+
+    // ✨ إنشاء المستخدم الجديد
+>>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
     const newUser = new User({
       name,
       email,
       password,
       mobileNumber,
+<<<<<<< HEAD
       seq,
       videosName: videosName || "",
       videos: videos || [],
       comment: ""
+=======
+      seq: nextSeq, // 👈 الرقم التسلسلي الجديد
+      comment:""
+>>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
     });
 
     await newUser.save();
 
     res.status(201).json({
       message: "تم إنشاء الحساب بنجاح",
+<<<<<<< HEAD
       userId: seq,
+=======
+      userId: nextSeq,
+>>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
     });
 
   } catch (err) {
@@ -146,7 +171,10 @@ exports.EditUser = async (req, res) => {
       req.body,
       { new: true }
     );
+<<<<<<< HEAD
     console.log(req.body.videosName)
+=======
+>>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
     if (!updatedUser) return res.status(404).json({ message: "User not found" });
     res.json({ message: "User updated successfully", user: updatedUser });
   } catch (err) {

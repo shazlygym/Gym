@@ -41,16 +41,23 @@ type:String
         type: [String], // 👈 مصفوفة نصوص (كل نص يحتوي التاريخ والساعة)
         default: [],
       },
+<<<<<<< HEAD
       videosName:{
 type:String,
 default:""
       },
+=======
+>>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
     videos: {
         type: [String], // 👈 مصفوفة من النصوص (تقدر تخليها Object أو Number)
         default: []     // 👈 تبدأ فاضية
       },
       seq:{
         type:Number,
+<<<<<<< HEAD
+=======
+         default: 0 
+>>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
       },
       comment:{
         type:String,
