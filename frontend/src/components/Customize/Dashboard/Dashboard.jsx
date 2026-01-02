@@ -157,7 +157,7 @@ const Dashboard = () => {
             <th className="px-1 py-3 text-center">عدد الأيام</th>
             <th className="px-1 py-3 text-center">الأيام المستخدمة</th>
             <th className="px-1 py-3 text-center">  اخر زيارة</th>
-            <th className="px-1 py-3 text-center"> اسم الباقة</th>
+            <th className="px-1 py-3 text-center"> قيمة الباقة  </th>
             <th className="px-1 py-3 text-center">الإجراءات</th>
           </tr>
         </thead>

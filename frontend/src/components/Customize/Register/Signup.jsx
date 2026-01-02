@@ -338,6 +338,18 @@ export default function Signup() {
         <h3 className="text-2xl font-semibold mb-6 text-center text-red">إنشاء حساب</h3>
 
         <div  className="space-y-4">
+        <div>
+            <label className="block text-sm font-medium">الاسم الكامل</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
+              placeholder="أدخل اسمك الكامل"
+              required
+            />
+          </div>
 
         <div>
             <label className="block text-sm font-medium">الرقم التعريفي</label>
@@ -352,61 +364,9 @@ export default function Signup() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium">الاسم الكامل</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
-              placeholder="أدخل اسمك الكامل"
-              required
-            />
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium">البريد الإلكتروني(اختياري)</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
-              placeholder="name@example.com"
-              
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">كلمة المرور</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
-              placeholder="********"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">رقم الهاتف </label>
-            <input
-              type="text"
-              name="mobileNumber"
-              value={formData.mobileNumber}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
-              placeholder="010xxxxxxxx"
-              required
-            />
-          </div>
-
-          
-          {/* اختيار باقة الفيديوهات */}
-          <div className="my-4">
+             {/* اختيار باقة الفيديوهات */}
+             <div className="my-4">
             <h3 className="text-lg font-semibold mb-2">اختر باقة فيديوهات</h3>
           
 
@@ -430,6 +390,53 @@ export default function Signup() {
               إضافة الباقة
             </button>
           </div>
+
+
+          <div>
+            <label className="block text-sm font-medium">رقم الهاتف </label>
+            <input
+              type="text"
+              name="mobileNumber"
+              value={formData.mobileNumber}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
+              placeholder="010xxxxxxxx"
+              required
+            />
+          </div>
+
+
+          <div>
+            <label className="block text-sm font-medium">كلمة المرور</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
+              placeholder="********"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium">البريد الإلكتروني(اختياري)</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
+              placeholder="name@example.com"
+              
+            />
+          </div>
+
+        
+
+        
+          
+       
 
           <button
            onClick={()=>handleSubmit()}
