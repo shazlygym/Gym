@@ -4,7 +4,6 @@ import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
 
-<<<<<<< HEAD
 
 const videoPackages = [
   {
@@ -271,15 +270,12 @@ const videoPackages = [
   
 ];
 
-=======
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
 export default function Signup() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     mobileNumber: "",
-<<<<<<< HEAD
     seq: "",
     videosName: "",
     videos: []          // ✅ مهم
@@ -288,10 +284,6 @@ export default function Signup() {
     const [member, setMember] = useState({});
 
   const [selectedPackageId, setSelectedPackageId] = useState(null);
-=======
-  });
-
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
 
   const navigate = useNavigate()
 
@@ -301,7 +293,6 @@ export default function Signup() {
       [e.target.name]: e.target.value,
     });
   };
-<<<<<<< HEAD
   const handleSubmit = async () => {
     try {
       const res = await axios.post(
@@ -341,31 +332,12 @@ export default function Signup() {
     alert(`تم إضافة باقة الفيديوهات: ${pkg.name}`);
   };
   
-=======
-
-  const handleSubmit = async () => {
-    try {
-    
-      
-      const res = await axios.post(`${apiUrl}/Signup`, formData,  { withCredentials: true }); 
-      console.log("77777777777777");
-      console.log("تم إنشاء الحساب:", res.data);
-      alert("تم إنشاء الحساب بنجاح!");
-      navigate("/Login")
-    } catch (err) {
-      console.error("خطأ في التسجيل:", err);
-      alert("حدث خطأ أثناء إنشاء الحساب");
-    }
-  };
-
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
         <h3 className="text-2xl font-semibold mb-6 text-center text-red">إنشاء حساب</h3>
 
         <div  className="space-y-4">
-<<<<<<< HEAD
 
         <div>
             <label className="block text-sm font-medium">الرقم التعريفي</label>
@@ -380,8 +352,6 @@ export default function Signup() {
             />
           </div>
 
-=======
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
           <div>
             <label className="block text-sm font-medium">الاسم الكامل</label>
             <input
@@ -434,7 +404,6 @@ export default function Signup() {
             />
           </div>
 
-<<<<<<< HEAD
           
           {/* اختيار باقة الفيديوهات */}
           <div className="my-4">
@@ -462,8 +431,6 @@ export default function Signup() {
             </button>
           </div>
 
-=======
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
           <button
            onClick={()=>handleSubmit()}
             className="w-full py-2 rounded-md text-white font-semibold bg-red hover:bg-red focus:outline-none focus:ring-2 focus:ring-red"

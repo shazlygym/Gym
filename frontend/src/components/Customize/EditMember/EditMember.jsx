@@ -73,11 +73,7 @@ const videoPackages = [
     ],
   },
   {
-<<<<<<< HEAD
     id: 5,
-=======
-    id: 4,
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
     name: "Push 1",
     videos: [
       "https://youtube.com/shorts/uL5DspcDr4k?si=6ifVhWdqyQBBdOb4",
@@ -90,11 +86,7 @@ const videoPackages = [
     ],
   },
   {
-<<<<<<< HEAD
     id: 6,
-=======
-    id: 4,
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
     name: "Push 2",
     videos: [
       "https://youtube.com/shorts/Q1S9ybWYMjE?si=DLmSfi8w8DW1eTcg",
@@ -107,11 +99,7 @@ const videoPackages = [
     ],
   },
   {
-<<<<<<< HEAD
     id: 7,
-=======
-    id: 5,
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
     name: "Pull 1",
     videos: [
       // 1- lat pulldown
@@ -140,11 +128,7 @@ const videoPackages = [
     ],
   },
   {
-<<<<<<< HEAD
     id: 8,
-=======
-    id: 6,
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
     name: "Pull 2",
     videos: [
       // 1- close grip lat pulldown
@@ -170,11 +154,7 @@ const videoPackages = [
     ],
   },
   {
-<<<<<<< HEAD
     id: 9,
-=======
-    id: 7,
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
     name: "Legs 1",
     videos: [
       // 1- squat
@@ -200,11 +180,7 @@ const videoPackages = [
     ],
   },
   {
-<<<<<<< HEAD
     id: 10,
-=======
-    id: 8,
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
     name: "Legs 2",
     videos: [
       // 1- leg press
@@ -225,11 +201,7 @@ const videoPackages = [
   },
 
   {
-<<<<<<< HEAD
     id: 11,
-=======
-    id: 9,
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
     name: "Full Body 1",
     videos: [
       // 1- dumbbell incline
@@ -262,11 +234,7 @@ const videoPackages = [
   },
 
   {
-<<<<<<< HEAD
     id: 12,
-=======
-    id: 10,
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
     name: "Full Body 2",
     videos: [
       // 1- dumbbell incline
@@ -300,11 +268,7 @@ const videoPackages = [
   
   
   {
-<<<<<<< HEAD
     id: 13,
-=======
-    id: 10,
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
     name: "Full Body 3",
     videos: [
     
@@ -322,10 +286,7 @@ const EditMember = () => {
   const [member, setMember] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedPackageId, setSelectedPackageId] = useState(null);
-<<<<<<< HEAD
   const [videosName, setVideosName]=("")
-=======
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
 
   // جلب بيانات العضو من الـ backend
   useEffect(() => {
@@ -349,16 +310,12 @@ const EditMember = () => {
       ...member,
       [name]: type === "checkbox" ? checked : value,
     });
-<<<<<<< HEAD
    
 
-=======
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
   };
 
   // ✅ إضافة باقة فيديوهات
   const handleAddPackage = () => {
-<<<<<<< HEAD
     if (!selectedPackageId) {
       alert("اختر الباقة أولاً");
       return;
@@ -381,25 +338,6 @@ const EditMember = () => {
   };
   
   
-=======
-    if (!selectedPackageId) return alert("اختر الباقة أولاً");
-
-    const pkg = videoPackages.find((p) => p.id === selectedPackageId);
-    console.log("test");
-   
-    
-    if (!pkg) return;
-    console.log("test2");
-    const updatedVideos = Array.from(new Set([...(member.videos || []), ...pkg.videos]));
-    console.log("test3");
-    setMember({
-      ...member,
-      videos: updatedVideos,
-    });
-
-    alert(`تم إضافة باقة الفيديوهات: ${pkg.name}`);
-  };
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
 
   // ✅ حذف فيديو
   const handleRemoveVideo = (index) => {
@@ -432,7 +370,6 @@ const EditMember = () => {
           تعديل بيانات العضو
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
-<<<<<<< HEAD
         <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
             <FaUser className="text-red-500 ml-3" />
             <input
@@ -444,8 +381,6 @@ const EditMember = () => {
               className="w-full bg-transparent outline-none text-gray-700"
             />
           </div>
-=======
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
           {/* الاسم */}
           <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
             <FaUser className="text-red-500 ml-3" />
@@ -549,18 +484,12 @@ const EditMember = () => {
             />
           </div>
 
-<<<<<<< HEAD
         
           {/* اختيار باقة الفيديوهات */}
           <div className="my-4">
             <h3 className="text-lg font-semibold mb-2">اختر باقة فيديوهات</h3>
           
 
-=======
-          {/* اختيار باقة الفيديوهات */}
-          <div className="my-4">
-            <h3 className="text-lg font-semibold mb-2">اختر باقة فيديوهات</h3>
->>>>>>> 72f6e64dc555cc66ab461bd5d02147dccf09ec2a
             <select
               value={selectedPackageId || ""}
               onChange={(e) => setSelectedPackageId(Number(e.target.value))}
