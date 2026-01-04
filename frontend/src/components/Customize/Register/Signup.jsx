@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+
 const apiUrl = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
 
 
@@ -390,6 +391,19 @@ export default function Signup() {
               إضافة الباقة
             </button>
           </div>
+
+
+             {/* عدد الأيام المسجلة */}
+                    <div className="flex items-center border rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-red-500 transition">
+                    
+                      <input
+                        type="number"
+                        name="totalDays"
+                        onChange={handleChange}
+                        placeholder="الايام المسجلة"
+                        className="w-full bg-transparent outline-none text-gray-700"
+                      />
+                    </div>
 
 
           <div>

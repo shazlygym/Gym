@@ -13,7 +13,7 @@ const OnxyMessaging = require('onxy-messaging');
 
 exports.signupUser = async (req, res) => {
   try {
-    const { name, email, password, mobileNumber, seq, videosName, videos } = req.body;
+    const { name, email, password, mobileNumber, seq, videosName, videos,totalDays } = req.body;
 
     // التحقق من المدخلات
     if (!name || !password || !mobileNumber || !seq) {
@@ -28,7 +28,8 @@ exports.signupUser = async (req, res) => {
       seq,
       videosName: videosName || "",
       videos: videos || [],
-      comment: ""
+      comment: "",
+      totalDays
     });
 
     await newUser.save();
