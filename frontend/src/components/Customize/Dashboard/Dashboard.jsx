@@ -157,6 +157,7 @@ const Dashboard = () => {
             <th className="px-1 py-3 text-center">عدد الأيام</th>
             <th className="px-1 py-3 text-center">الأيام المستخدمة</th>
             <th className="px-1 py-3 text-center">  اخر زيارة</th>
+            <th className="px-1 py-3 text-center"> انتهاء الاشتراك</th>
             <th className="px-1 py-3 text-center"> اسم الباقة</th>
             <th className="px-1 py-3 text-center"> قيمة الباقة  </th>
             <th className="px-1 py-3 text-center">الإجراءات</th>
@@ -179,6 +180,18 @@ const Dashboard = () => {
   {Array.isArray(user.gymVisits)
     ? user.gymVisits.at(-1)
     : user.gymVisits ?? "-"}
+</td>
+
+<td className="px-1 py-3">
+  {(() => {
+    const joinDate = new Date(user.joinDate);
+    const today = new Date();
+
+    const diffTime = today - joinDate; // الفرق بالميلي ثانية
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    return diffDays >= 30 ? "مرّ 30 يوم" : "لم يمر 30 يوم";
+  })()}
 </td>
 
 <td className="px-1 py-3 text-center">{user.packageName}</td>
@@ -223,6 +236,24 @@ const Dashboard = () => {
           <p className="text-gray-600">الرقم: {user.mobileNumber}</p>
           <p className="text-gray-600">قيمة الباقة: {user.packageName}</p>
           <p className="text-gray-600">اسم الباقة: {user.videosName}</p>
+          <p className="text-gray-600">انتهاء الاشتراك:
+            
+          <span className="px-1 py-3">
+  {(() => {
+    const joinDate = new Date(user.joinDate);
+    const today = new Date();
+
+    const diffTime = today - joinDate; // الفرق بالميلي ثانية
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    return diffDays >= 30 ? "مرّ 30 يوم" : "لم يمر 30 يوم";
+  })()}
+</span>
+
+            
+            
+            
+             </p>
           <p className="text-gray-600">
             تاريخ التسجيل: {new Date(user.joinDate).toLocaleDateString("ar-EG")}
           </p>

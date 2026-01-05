@@ -484,17 +484,28 @@ const EditMember = () => {
             />
           </div>
 
-          <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
-            <FaCalendarCheck className="text-red-500 ml-3" />
-            <input
-              type="text"
-              name="packageName"
-              value={member.packageName || ""}
-              onChange={handleChange}
-              placeholder=" اسم الباقة"
-              className="w-full bg-transparent outline-none text-gray-700"
-            />
-          </div>
+
+
+          <div>
+  <label className="block text-sm font-medium">اسم الباقة</label>
+  <select
+    name="packageName"
+    value={member.packageName}
+    onChange={handleChange}
+    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
+    required
+  >
+    <option value="" disabled>
+      اختر اسم الباقة
+    </option>
+    <option value="الاولى">الاولى</option>
+    <option value="الثانية ">الثانية </option>
+    <option value="الثالثة">الثالثة </option>
+  </select>
+</div>
+
+
+
 
         
           {/* اختيار باقة الفيديوهات */}

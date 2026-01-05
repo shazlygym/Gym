@@ -372,9 +372,9 @@ export default function Signup() {
     <option value="" disabled>
       اختر اسم الباقة
     </option>
-    <option value="basic">Basic</option>
-    <option value="transform basic">Transform Basic</option>
-    <option value="elite transform">Elite Transform</option>
+    <option value="الاولى">الاولى</option>
+    <option value="الثانية ">الثانية </option>
+    <option value="الثالثة">الثالثة </option>
   </select>
 </div>
 
