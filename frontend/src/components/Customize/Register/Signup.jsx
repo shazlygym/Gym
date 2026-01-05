@@ -258,13 +258,6 @@ const videoPackages = [
   },
   
   
-  {
-    id: 13,
-    name: "Full Body 3",
-    videos: [
-    
-    ],
-  },
 
   
     
@@ -279,6 +272,7 @@ export default function Signup() {
     mobileNumber: "",
     seq: "",
     videosName: "",
+    packageName:"",
     videos: []          // ✅ مهم
   });
   
@@ -303,7 +297,7 @@ export default function Signup() {
       );
   
       alert("تم إنشاء الحساب بنجاح!");
-      navigate("/Login");
+      navigate("/Dashboard");
     } catch (err) {
       console.error(err);
       alert("حدث خطأ أثناء إنشاء الحساب");
@@ -364,6 +358,26 @@ export default function Signup() {
               required
             />
           </div>
+
+
+          <div>
+  <label className="block text-sm font-medium">اسم الباقة</label>
+  <select
+    name="packageName"
+    value={formData.packageName}
+    onChange={handleChange}
+    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
+    required
+  >
+    <option value="" disabled>
+      اختر اسم الباقة
+    </option>
+    <option value="basic">Basic</option>
+    <option value="transform basic">Transform Basic</option>
+    <option value="elite transform">Elite Transform</option>
+  </select>
+</div>
+
 
 
              {/* اختيار باقة الفيديوهات */}

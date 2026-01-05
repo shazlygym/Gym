@@ -54,6 +54,9 @@ default:""
       },
       comment:{
         type:String,
+      },
+      packageName:{
+        type:String
       }
 
 },{timestamps:true})

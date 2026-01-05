@@ -3,6 +3,9 @@ const sendEmail = require('../utils/sendEmail');
 const {User}= require('../models/User')
 const jwt = require('jsonwebtoken')
 const OnxyMessaging = require('onxy-messaging');
+const cron = require('node-cron');
+const sendThirty = require("../utils/thirtyDays"); // دالة Brevo
+const dayjs = require("dayjs");
 
 
 
@@ -13,7 +16,7 @@ const OnxyMessaging = require('onxy-messaging');
 
 exports.signupUser = async (req, res) => {
   try {
-    const { name, email, password, mobileNumber, seq, videosName, videos,totalDays } = req.body;
+    const { name, email, password, mobileNumber, seq, videosName, videos,totalDays,packageName } = req.body;
 
     // التحقق من المدخلات
     if (!name || !password || !mobileNumber || !seq) {
@@ -29,7 +32,8 @@ exports.signupUser = async (req, res) => {
       videosName: videosName || "",
       videos: videos || [],
       comment: "",
-      totalDays
+      totalDays,
+      packageName
     });
 
     await newUser.save();
@@ -182,20 +186,6 @@ exports.checkAuth = (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // 🟢 تسجيل حضور المستخدم
 exports.addGymVisit = async (req, res) => {
   try {
@@ -256,18 +246,6 @@ exports.addGymVisit = async (req, res) => {
     res.status(500).json({ message: "حدث خطأ أثناء تسجيل الزيارة" });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -384,3 +362,41 @@ exports.NotiEmail = async (req, res) => {
     });
   }
 };
+
+
+
+
+
+cron.schedule("0 9 * * *", async () => {
+  console.log("⏰ Running check for expired subscriptions...");
+
+  try {
+    const today = dayjs().startOf("day");
+
+    const users = await User.find({
+      joinDate: { $exists: true }
+    });
+
+    for (const user of users) {
+      const joinDate = dayjs(user.joinDate).startOf("day");
+      const expiryDate = joinDate.add(30, "day");
+
+      // إذا اليوم هو يوم انتهاء الاشتراك
+      if (today.isSame(expiryDate)) {
+        await sendThirty({
+          to: user.email,
+          name: user.name,
+          subject: "انتهى اشتراكك في شاذلي جيم",
+          template: "thirtyDays", // اسم ملف handlebars
+          packageName: user.packageName || "الاشتراك الشهري",
+          expiryDate: expiryDate.format("YYYY-MM-DD"),
+        });
+
+        console.log(`📧 Expired subscription email sent to ${user.email}`);
+      }
+    }
+
+  } catch (error) {
+    console.error("❌ Error in subscription expiry cron job:", error);
+  }
+});

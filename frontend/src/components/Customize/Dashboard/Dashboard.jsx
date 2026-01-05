@@ -136,9 +136,9 @@ const Dashboard = () => {
 
        <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 bg-white hover:bg-red-50 text-red px-4 py-2 rounded-lg shadow-md transition"
+            className="flex items-center gap-2 my-4 bg-white hover:bg-red-50 text-red px-4 py-2 rounded-lg shadow-md transition"
           >
-            <FaArrowLeft className="text-red text-lg" />
+            <FaArrowLeft className="text-red text-lg " />
             <span className="font-semibold">رجوع</span>
           </button>
 
@@ -150,13 +150,14 @@ const Dashboard = () => {
         <thead>
           <tr className="bg-red text-white">
             <th className="px-1 py-3 text-right">الاسم</th>
-            <th className="px-1 py-3 text-right">الإيميل</th>
+         
             <th className="px-1 py-3 text-right">الرقم التعريفي</th>
             <th className="px-1 py-3 text-right">الرقم</th>
             <th className="px-1 py-3 text-right">تاريخ التسجيل</th>
             <th className="px-1 py-3 text-center">عدد الأيام</th>
             <th className="px-1 py-3 text-center">الأيام المستخدمة</th>
             <th className="px-1 py-3 text-center">  اخر زيارة</th>
+            <th className="px-1 py-3 text-center"> اسم الباقة</th>
             <th className="px-1 py-3 text-center"> قيمة الباقة  </th>
             <th className="px-1 py-3 text-center">الإجراءات</th>
           </tr>
@@ -165,7 +166,7 @@ const Dashboard = () => {
           {currentUsers.map((user) => (
             <tr key={user._id} className="border-b hover:bg-gray-50 transition">
               <td className="px-1 py-3">{user.name}</td>
-              <td className="px-1 py-3 break-words">{user.email}</td>
+         
               <td className="px-1 py-3 break-words">{user.seq}</td>
               <td className="px-1 py-3">{user.mobileNumber}</td>
               <td className="px-1 py-3">
@@ -173,13 +174,14 @@ const Dashboard = () => {
               </td>
               <td className=" px-1 py-3 text-center">{user.totalDays}</td>
               <td className="px-1 py-3 text-center">{user.usedDays}</td>
+           
               <td className="p-4 text-center">
   {Array.isArray(user.gymVisits)
     ? user.gymVisits.at(-1)
     : user.gymVisits ?? "-"}
 </td>
 
-
+<td className="px-1 py-3 text-center">{user.packageName}</td>
               <td className="px-1 py-3 text-center">{user.videosName}</td>
               <td className="px-1 py-3 flex flex-wrap justify-center gap-2">
                 <Link to={`/EditMember/${user._id}`}>
@@ -217,8 +219,10 @@ const Dashboard = () => {
       {currentUsers.map((user) => (
         <div key={user._id} className="bg-white shadow-md rounded-lg p-4">
           <p className="font-semibold text-gray-700">الاسم: {user.name}</p>
-          <p className="text-gray-600 break-words">الإيميل: {user.email}</p>
+          <p className="text-gray-600">الرقم التعريفي: {user.seq}</p>
           <p className="text-gray-600">الرقم: {user.mobileNumber}</p>
+          <p className="text-gray-600">قيمة الباقة: {user.packageName}</p>
+          <p className="text-gray-600">اسم الباقة: {user.videosName}</p>
           <p className="text-gray-600">
             تاريخ التسجيل: {new Date(user.joinDate).toLocaleDateString("ar-EG")}
           </p>
