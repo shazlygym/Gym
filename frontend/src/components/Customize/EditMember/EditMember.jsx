@@ -484,6 +484,18 @@ const EditMember = () => {
             />
           </div>
 
+          <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
+            <FaCalendarCheck className="text-red-500 ml-3" />
+            <input
+              type="text"
+              name="packageName"
+              value={member.packageName || ""}
+              onChange={handleChange}
+              placeholder=" اسم الباقة"
+              className="w-full bg-transparent outline-none text-gray-700"
+            />
+          </div>
+
         
           {/* اختيار باقة الفيديوهات */}
           <div className="my-4">
