@@ -152,14 +152,14 @@ const Dashboard = () => {
             <th className="px-1 py-3 text-right">الاسم</th>
          
             <th className="px-1 py-3 text-right">الرقم التعريفي</th>
-            <th className="px-1 py-3 text-right">الرقم</th>
+            <th className="px-1 py-3 text-right">الهاتف</th>
             <th className="px-1 py-3 text-right">تاريخ التسجيل</th>
             <th className="px-1 py-3 text-center">عدد الأيام</th>
             <th className="px-1 py-3 text-center">الأيام المستخدمة</th>
             <th className="px-1 py-3 text-center">  اخر زيارة</th>
             <th className="px-1 py-3 text-center"> انتهاء الاشتراك</th>
-            <th className="px-1 py-3 text-center"> اسم الباقة</th>
             <th className="px-1 py-3 text-center"> قيمة الباقة  </th>
+            <th className="px-1 py-3 text-center"> اسم الباقة</th>
             <th className="px-1 py-3 text-center">الإجراءات</th>
           </tr>
         </thead>
@@ -190,12 +190,12 @@ const Dashboard = () => {
     const diffTime = today - joinDate; // الفرق بالميلي ثانية
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-    return diffDays >= 30 ? "مرّ 30 يوم" : "لم يمر 30 يوم";
+    return diffDays >= 30 ? "انتهاء الاشتراك" : "  الاشتراك ساري ";
   })()}
 </td>
 
-<td className="px-1 py-3 text-center">{user.packageName}</td>
-              <td className="px-1 py-3 text-center">{user.videosName}</td>
+<td className="px-1 py-3 text-center">{user.packagePrice}</td>
+              <td className="px-1 py-3 text-center">{user.packageName}</td>
               <td className="px-1 py-3 flex flex-wrap justify-center gap-2">
                 <Link to={`/EditMember/${user._id}`}>
                   <button className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm">
@@ -233,8 +233,8 @@ const Dashboard = () => {
         <div key={user._id} className="bg-white shadow-md rounded-lg p-4">
           <p className="font-semibold text-gray-700">الاسم: {user.name}</p>
           <p className="text-gray-600">الرقم التعريفي: {user.seq}</p>
-          <p className="text-gray-600">الرقم: {user.mobileNumber}</p>
-          <p className="text-gray-600">قيمة الباقة: {user.packageName}</p>
+          <p className="text-gray-600">الهاتف: {user.mobileNumber}</p>
+          <p className="text-gray-600">قيمة الباقة: {user.packagePrice}</p>
           <p className="text-gray-600">اسم الباقة: {user.videosName}</p>
           <p className="text-gray-600">انتهاء الاشتراك:
             
@@ -246,7 +246,7 @@ const Dashboard = () => {
     const diffTime = today - joinDate; // الفرق بالميلي ثانية
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-    return diffDays >= 30 ? "مرّ 30 يوم" : "لم يمر 30 يوم";
+    return diffDays >= 30 ? "انتهاء الاشتراك" : "الاشتراك ساري";
   })()}
 </span>
 

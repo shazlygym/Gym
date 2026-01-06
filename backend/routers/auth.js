@@ -14,6 +14,7 @@ router.get('/checkAuth',authController.checkAuth)
 router.post('/addGymVisit/:id',authController.addGymVisit)
 router.get("/dashboardStats", authController.getDashboardStats);
 router.post("/sendEmail/:id", authController.NotiEmail);
+router.get("/dashboardStats", authController.getDashboardStats);
 
 
 

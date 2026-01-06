@@ -371,7 +371,7 @@ const EditMember = () => {
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
         <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
-            <FaUser className="text-red-500 ml-3" />
+          
             <input
               type="number"
               name="seq"
@@ -505,7 +505,17 @@ const EditMember = () => {
 </div>
 
 
-
+<div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
+            <FaUser className="text-red-500 ml-3" />
+            <input
+              type="number"
+              name="packagePrice"
+              value={member.packagePrice || ""}
+              onChange={handleChange}
+              placeholder=" قيمة الباقة"
+              className="w-full bg-transparent outline-none text-gray-700"
+            />
+          </div>
 
         
           {/* اختيار باقة الفيديوهات */}

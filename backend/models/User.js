@@ -57,6 +57,9 @@ default:""
       },
       packageName:{
         type:String
+      },
+      packagePrice:{
+        type:Number
       }
 
 },{timestamps:true})

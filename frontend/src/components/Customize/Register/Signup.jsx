@@ -273,6 +273,7 @@ export default function Signup() {
     seq: "",
     videosName: "",
     packageName:"",
+    packagePrice:"",
     videos: []          // ✅ مهم
   });
   
@@ -377,6 +378,21 @@ export default function Signup() {
     <option value="الثالثة">الثالثة </option>
   </select>
 </div>
+
+
+
+<div>
+            <label className="block text-sm font-medium"> قيمة الباقة</label>
+            <input
+              type="number"
+              name="packagePrice"
+              value={formData.packagePrice}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
+              placeholder="أدخل  قيمة الباقة"
+              required
+            />
+          </div>
 
 
 

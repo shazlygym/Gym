@@ -16,7 +16,7 @@ const dayjs = require("dayjs");
 
 exports.signupUser = async (req, res) => {
   try {
-    const { name, email, password, mobileNumber, seq, videosName, videos,totalDays,packageName } = req.body;
+    const { name, email, password, mobileNumber, seq, videosName, videos,totalDays,packageName,packagePrice } = req.body;
 
     // التحقق من المدخلات
     if (!name || !password || !mobileNumber || !seq) {
@@ -33,7 +33,8 @@ exports.signupUser = async (req, res) => {
       videos: videos || [],
       comment: "",
       totalDays,
-      packageName
+      packageName,
+      packagePrice
     });
 
     await newUser.save();
@@ -402,3 +403,80 @@ cron.schedule("0 9 * * *", async () => {
     console.error("❌ Error in subscription expiry cron job:", error);
   }
 });
+
+
+
+exports.getDashboardStats = async (req, res) => {
+  try {
+    // 1. الإحصائيات الأساسية (التي كانت موجودة سابقاً)
+    const totalUsers = await User.countDocuments();
+    const activeUsers = await User.countDocuments({ totalDays: { $gt: 0 } });
+    const expiredUsers = await User.countDocuments({ totalDays: { $lte: 0 } });
+
+    // حساب إجمالي الزيارات
+    const allUsers = await User.find({}, "gymVisits name");
+    let totalVisits = 0;
+    let neverVisitedCount = 0;
+    let maxVisitsUser = { name: "-", visits: 0 };
+
+    allUsers.forEach(u => {
+      const visitsCount = u.gymVisits ? u.gymVisits.length : 0;
+      totalVisits += visitsCount;
+      if (visitsCount === 0) neverVisitedCount++;
+      if (visitsCount > maxVisitsUser.visits) {
+        maxVisitsUser = { name: u.name, visits: visitsCount };
+      }
+    });
+
+    const avgVisitsPerUser = totalUsers > 0 ? (totalVisits / totalUsers).toFixed(1) : 0;
+
+    // 2. تجميع بيانات الباقات مع تنظيف الأسماء (Trim) لمنع التكرار
+    const packageStatsRaw = await User.aggregate([
+      {
+        $group: {
+          _id: { $trim: { input: { $ifNull: ["$packageName", "غير محدد"] } } }, 
+          count: { $sum: 1 },
+          totalPrice: { $sum: { $ifNull: ["$packagePrice", 0] } }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          packageName: "$_id",
+          count: 1,
+          totalPrice: 1
+        }
+      }
+    ]);
+
+    // 3. تحليل ساعات الحضور
+    const hourCounts = {};
+    allUsers.forEach(u => {
+      u.gymVisits.forEach(v => {
+        const hour = v.split(" ")[1]?.split(":")[0];
+        if (hour) hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+      });
+    });
+
+    const attendanceStats = Object.keys(hourCounts).map(h => ({
+      hour: h + ":00",
+      attendees: hourCounts[h]
+    })).sort((a, b) => a.hour.localeCompare(b.hour));
+
+    // إرسال كل شيء في استجابة واحدة
+    res.json({
+      totalUsers,
+      totalVisits,
+      neverVisitedCount,
+      maxVisitsUser,
+      avgVisitsPerUser,
+      activeUsers,
+      expiredUsers,
+      packageStats: packageStatsRaw,
+      attendanceStats
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
