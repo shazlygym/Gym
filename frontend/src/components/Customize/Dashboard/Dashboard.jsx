@@ -12,6 +12,16 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1); // 🆕 الصفحة الحالية
   const usersPerPage = 10; // 🆕 عدد المستخدمين في كل صفحة
 
+  // Modal State
+  const [modalData, setModalData] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "success", // success | error | warning
+  });
+
+  const closeModal = () => setModalData({ ...modalData, isOpen: false });
+
   const navigate = useNavigate();
 
   // 🔹 جلب المستخدمين من الـ backend
@@ -35,13 +45,23 @@ const Dashboard = () => {
     const user = users.find((u) => u._id === id);
 
     if (user.usedDays >= user.totalDays) {
-      alert("❌ انتهى اشتراك هذا المستخدم في الجيم!");
+      setModalData({
+        isOpen: true,
+        title: "تنبيه",
+        message: "❌ انتهى اشتراك هذا المستخدم في الجيم!",
+        type: "error",
+      });
       return;
     }
 
     try {
       const res = await axios.post(`${apiUrl}/addGymVisit/${id}`);
-      alert(res.data.message);
+      setModalData({
+        isOpen: true,
+        title: "نجاح",
+        message: res.data.message || "تم تسجيل الحضور بنجاح ✅",
+        type: "success",
+      });
 
       const updatedUsers = users.map((u) =>
         u._id === id ? { ...u, usedDays: u.usedDays + 1 } : u
@@ -49,7 +69,12 @@ const Dashboard = () => {
       setUsers(updatedUsers);
     } catch (err) {
       console.error(err);
-      alert("حدث خطأ أثناء تسجيل الزيارة");
+      setModalData({
+        isOpen: true,
+        title: "خطأ",
+        message: "حدث خطأ أثناء تسجيل الزيارة",
+        type: "error",
+      });
     }
   };
 
@@ -101,10 +126,20 @@ const Dashboard = () => {
         // ✅ إرسال الطلب إلى السيرفر باستخدام الـ userId فقط
         const response = await axios.post(`${apiUrl}/sendEmail/${id}`);
   
-        alert(response.data.message || "تم إرسال التذكير بنجاح ✅");
+        setModalData({
+          isOpen: true,
+          title: "نجاح",
+          message: response.data.message || "تم إرسال التذكير بنجاح ✅",
+          type: "success",
+        });
       } catch (error) {
         console.error("❌ خطأ أثناء إرسال البريد:", error);
-        alert(error.response?.data?.message || "حدث خطأ أثناء إرسال البريد الإلكتروني");
+        setModalData({
+          isOpen: true,
+          title: "خطأ",
+          message: error.response?.data?.message || "حدث خطأ أثناء إرسال البريد الإلكتروني",
+          type: "error",
+        });
       } 
     };
   return (
@@ -347,6 +382,38 @@ const Dashboard = () => {
             {index + 1}
           </button>
         ))}
+      </div>
+    )}
+
+    {/* Custom Modal */}
+    {modalData.isOpen && (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        onClick={closeModal}
+      >
+        <div
+          className="bg-white rounded-lg shadow-lg w-11/12 md:w-1/3 p-6 text-center transform transition-all scale-100"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h2
+            className={`text-2xl font-bold mb-4 ${
+              modalData.type === "error" ? "text-red" : "text-green"
+            }`}
+          >
+            {modalData.title}
+          </h2>
+          <p className="text-gray-700 text-lg mb-6">{modalData.message}</p>
+          <button
+            onClick={closeModal}
+            className={`px-6 py-2 text-white font-bold rounded-lg shadow-md transition ${
+              modalData.type === "error"
+                ? "bg-red hover:bg-red"
+                : "bg-green hover:bg-green"
+            }`}
+          >
+            حسناً
+          </button>
+        </div>
       </div>
     )}
   </div>

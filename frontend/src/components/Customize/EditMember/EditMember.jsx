@@ -7,6 +7,7 @@ import {
   FaCalendarAlt,
   FaCalendarCheck,
   FaComment,
+  FaArrowLeft,
 } from "react-icons/fa";
 import axios from "axios";
 
@@ -366,9 +367,17 @@ const EditMember = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-center p-6">
       <div className="bg-white shadow-2xl rounded-3xl p-10 w-full max-w-2xl">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 mb-6 text-black border-md border-2 border-black  hover:text-white  hover:bg-black rounded-md p-2 transition font-bold"
+        >
+          <span>رجوع</span>
+          <FaArrowLeft />
+        </button>
         <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">
           تعديل بيانات العضو
         </h1>
+        
         <form onSubmit={handleSubmit} className="space-y-6">
         <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
           
