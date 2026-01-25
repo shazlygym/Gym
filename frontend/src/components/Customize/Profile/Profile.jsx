@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import {
@@ -8,6 +8,8 @@ import {
   FaDumbbell,
   FaCheckCircle,
   FaUserPlus,
+  FaExclamationTriangle,
+  FaTimesCircle,
 } from "react-icons/fa";
 import { FaGaugeHigh } from "react-icons/fa6";
 
@@ -51,13 +53,56 @@ const Profile = () => {
 
   const progress = (user.usedDays / user.totalDays) * 100;
   const remainingDays = user.totalDays - user.usedDays;
-  const status = remainingDays > 0 ? "نشط" : "منتهي";
+
+  // حساب حالة الاشتراك (منتهي / قارب على الانتهاء)
+  const joinDate = new Date(user.joinDate);
+  const today = new Date();
+  const diffTime = today - joinDate;
+  const daysSinceJoin = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const daysLeftInMonth = 30 - daysSinceJoin;
+
+  const isExpiredByDate = daysSinceJoin >= 30;
+  const isExpiredByUsage = remainingDays <= 0;
+  const isExpired = isExpiredByDate || isExpiredByUsage;
+
+  const isWarningByDate = !isExpired && daysLeftInMonth <= 5;
+  const isWarningByUsage = !isExpired && remainingDays <= 3;
+  const isWarning = isWarningByDate || isWarningByUsage;
+
+  const status = isExpired ? "منتهي" : "نشط";
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4">
       <h1 className="text-3xl font-bold text-center text-red mb-10">
         الملف الشخصي
       </h1>
+
+      {/* تنبيهات الاشتراك */}
+      {isExpired && (
+        <div className="max-w-6xl mx-auto mb-6 bg-red-100 border-r-4 border-red-600 p-4 rounded shadow-md flex items-center gap-3">
+          <FaTimesCircle className="text-red-600 text-2xl" />
+          <div>
+            <p className="font-bold text-red-700">تنبيه: اشتراكك منتهي!</p>
+            <p className="text-red-600 text-sm">
+              يرجى تجديد الاشتراك للاستمرار في الاستفادة من الخدمات.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {isWarning && (
+        <div className="max-w-6xl mx-auto mb-6 bg-yellow-100 border-r-4 border-yellow-500 p-4 rounded shadow-md flex items-center gap-3">
+          <FaExclamationTriangle className="text-yellow-600 text-2xl" />
+          <div>
+            <p className="font-bold text-yellow-700">تنبيه: اشتراكك على وشك الانتهاء!</p>
+            <p className="text-yellow-600 text-sm">
+              {isWarningByDate
+                ? `متبقي ${daysLeftInMonth} أيام على انتهاء الشهر.`
+                : `متبقي ${remainingDays} زيارات فقط.`}
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
         {/* كارد البيانات */}

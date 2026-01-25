@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaChartBar } from "react-icons/fa";
-import { FaPersonRifle } from "react-icons/fa6";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
 
@@ -164,7 +163,23 @@ const Dashboard = () => {
           </tr>
         </thead>
         <tbody>
-          {currentUsers.map((user) => (
+          {currentUsers.map((user) => {
+             const joinDate = new Date(user.joinDate);
+             const today = new Date();
+             const diffTime = today - joinDate;
+             const daysSinceJoin = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+             const daysLeftInMonth = 30 - daysSinceJoin;
+             const remainingDays = user.totalDays - user.usedDays;
+     
+             const isExpiredByDate = daysSinceJoin >= 30;
+             const isExpiredByUsage = remainingDays <= 0;
+             const isExpired = isExpiredByDate || isExpiredByUsage;
+     
+             const isWarningByDate = !isExpired && daysLeftInMonth <= 5;
+             const isWarningByUsage = !isExpired && remainingDays <= 3;
+             const isWarning = isWarningByDate || isWarningByUsage;
+
+            return (
             <tr key={user._id} className="border-b hover:bg-gray-50 transition">
               <td className="px-1 py-3">{user.name}</td>
          
@@ -182,16 +197,14 @@ const Dashboard = () => {
     : user.gymVisits ?? "-"}
 </td>
 
-<td className="px-1 py-3">
-  {(() => {
-    const joinDate = new Date(user.joinDate);
-    const today = new Date();
-
-    const diffTime = today - joinDate; // الفرق بالميلي ثانية
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-    return diffDays >= 30 ? "انتهاء الاشتراك" : "  الاشتراك ساري ";
-  })()}
+<td className="px-1 py-3 text-center">
+  {isExpired ? (
+    <span className="text-white bg-red px-2 py-1 rounded-md font-bold">منتهي</span>
+  ) : isWarning ? (
+    <span className="bg-black text-white px-2 py-1 rounded-md font-bold">قارب على الانتهاء</span>
+  ) : (
+    <span className="bg-green text-white px-2 py-1 rounded-md font-bold">ساري</span>
+  )}
 </td>
 
 <td className="px-1 py-3 text-center">{user.packagePrice}</td>
@@ -210,26 +223,48 @@ const Dashboard = () => {
                 </button>
                 <button
                   onClick={() => handleAddVisit(user._id)}
-                  className="bg-green hover:bg-green text-white px-4 py-2 rounded-md text-sm"
+                  disabled={isExpired}
+                  className={`px-4 py-2 rounded-md text-sm transition ${
+                    isExpired
+                      ? "bg-gray-400 cursor-not-allowed text-white"
+                      : "bg-green hover:bg-green text-white"
+                  }`}
                 >
                   تسجيل حضور
                 </button>
                 <button
-              onClick={() => handleSendEmail(user._id)}
-              className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm "
-            >
-               ارسال ايميل 
-            </button>
+                  onClick={() => handleSendEmail(user._id)}
+                  className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm"
+                >
+                   ارسال ايميل 
+                </button>
               </td>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>
   
     {/* بطاقات المستخدمين للشاشات الصغيرة */}
     <div className="md:hidden space-y-4">
-      {currentUsers.map((user) => (
+      {currentUsers.map((user) => {
+        const joinDate = new Date(user.joinDate);
+        const today = new Date();
+        const diffTime = today - joinDate;
+        const daysSinceJoin = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const daysLeftInMonth = 30 - daysSinceJoin;
+        const remainingDays = user.totalDays - user.usedDays;
+
+        const isExpiredByDate = daysSinceJoin >= 30;
+        const isExpiredByUsage = remainingDays <= 0;
+        const isExpired = isExpiredByDate || isExpiredByUsage;
+
+        const isWarningByDate = !isExpired && daysLeftInMonth <= 5;
+        const isWarningByUsage = !isExpired && remainingDays <= 3;
+        const isWarning = isWarningByDate || isWarningByUsage;
+
+        return (
         <div key={user._id} className="bg-white shadow-md rounded-lg p-4">
           <p className="font-semibold text-gray-700">الاسم: {user.name}</p>
           <p className="text-gray-600">الرقم التعريفي: {user.seq}</p>
@@ -239,16 +274,14 @@ const Dashboard = () => {
           <p className="text-gray-600">انتهاء الاشتراك:
             
           <span className="px-1 py-3">
-  {(() => {
-    const joinDate = new Date(user.joinDate);
-    const today = new Date();
-
-    const diffTime = today - joinDate; // الفرق بالميلي ثانية
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-    return diffDays >= 30 ? "انتهاء الاشتراك" : "الاشتراك ساري";
-  })()}
-</span>
+            {isExpired ? (
+              <span className="text-white bg-red px-2 py-1 rounded-md font-bold">منتهي</span>
+            ) : isWarning ? (
+              <span className="bg-black text-white px-2 py-1 rounded-md font-bold">قارب على الانتهاء</span>
+            ) : (
+              <span className="bg-green text-white px-2 py-1 rounded-md font-bold">ساري</span>
+            )}
+          </span>
 
             
             
@@ -275,7 +308,12 @@ const Dashboard = () => {
            
             <button
               onClick={() => handleAddVisit(user._id)}
-              className="bg-green hover:bg-green text-white px-4 py-2 rounded-md text-sm w-full"
+              disabled={isExpired}
+              className={`px-4 py-2 rounded-md text-sm w-full transition ${
+                isExpired
+                  ? "bg-gray-400 cursor-not-allowed text-white"
+                  : "bg-green hover:bg-green text-white"
+              }`}
             >
               تسجيل الحضور
             </button>
@@ -289,7 +327,8 @@ const Dashboard = () => {
             
           </div>
         </div>
-      ))}
+            );
+          })}
     </div>
   
     {/* أزرار التصفح */}
