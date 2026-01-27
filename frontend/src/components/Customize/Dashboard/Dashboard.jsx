@@ -142,6 +142,26 @@ const Dashboard = () => {
         });
       } 
     };
+
+
+    function timeAgo(dateString) {
+      const now = new Date();
+      const past = new Date(dateString);
+    
+      const diffInMs = now - past;
+      const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    
+      if (diffInDays < 1) return "اليوم";
+      if (diffInDays < 30) return `منذ ${diffInDays} يوم`;
+    
+      const months = Math.floor(diffInDays / 30);
+      if (months < 12) return `منذ ${months} شهر`;
+    
+      const years = Math.floor(months / 12);
+      return `منذ ${years} سنة`;
+    }
+    
+
   return (
     <div className="p-4 bg-gray-100 min-h-screen" dir="rtl">
     <h1 className="text-3xl font-bold mb-6 text-gray-600">لوحة التحكم</h1>
@@ -188,6 +208,7 @@ const Dashboard = () => {
             <th className="px-1 py-3 text-right">الرقم التعريفي</th>
             <th className="px-1 py-3 text-right">الهاتف</th>
             <th className="px-1 py-3 text-right">تاريخ التسجيل</th>
+            <th className="px-1 py-3 text-right"> المدة</th>
             <th className="px-1 py-3 text-center">عدد الأيام</th>
             <th className="px-1 py-3 text-center">الأيام المستخدمة</th>
             <th className="px-1 py-3 text-center">  اخر زيارة</th>
@@ -223,6 +244,10 @@ const Dashboard = () => {
               <td className="px-1 py-3">
                 {new Date(user.joinDate).toLocaleDateString("ar-EG")}
               </td>
+              <td className="px-1 py-3 text-center">
+  {timeAgo(user.joinDate)}
+</td>
+
               <td className=" px-1 py-3 text-center">{user.totalDays}</td>
               <td className="px-1 py-3 text-center">{user.usedDays}</td>
            
@@ -324,6 +349,11 @@ const Dashboard = () => {
              </p>
           <p className="text-gray-600">
             تاريخ التسجيل: {new Date(user.joinDate).toLocaleDateString("ar-EG")}
+          </p>
+
+          <p className="text-gray-600">
+             المدة:   {timeAgo(user.joinDate)}
+
           </p>
           <p className="text-gray-600">
             عدد الأيام: {user.totalDays} | الأيام المستخدمة: {user.usedDays}
