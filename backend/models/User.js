@@ -29,6 +29,11 @@ type:String
         default: 0 
     },
 
+    renewalDate:{
+        type:Date,
+        default: Date.now 
+    },
+
     usedDays:{
         type:Number,
         default: 0 

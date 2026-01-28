@@ -250,66 +250,83 @@ exports.addGymVisit = async (req, res) => {
   }
 };
 
+// exports.getDashboardStats = async (req, res) => {
+//   try {
+//     console.log("sd");
+    
+//     const users = await User.find({}, "gymVisits renewalDate name");
 
+//     const totalUsers = users.length;
 
-exports.getDashboardStats = async (req, res) => {
-  try {
-    const users = await User.find({}, "gymVisits totalDays usedDays name");
+//     const allVisits = users.flatMap(u => u.gymVisits || []);
+//     const totalVisits = allVisits.length;
 
-    const totalUsers = users.length;
+//     const neverVisitedCount = users.filter(u => !u.gymVisits || u.gymVisits.length === 0).length;
 
-    // مجموع الزيارات لجميع المستخدمين
-    const allVisits = users.flatMap(u => u.gymVisits || []);
-    const totalVisits = allVisits.length;
+//     let maxVisitsUser = null;
+//     users.forEach(u => {
+//       const count = (u.gymVisits || []).length;
+//       if (!maxVisitsUser || count > maxVisitsUser.count) {
+//         maxVisitsUser = { user: u, count };
+//       }
+//     });
 
-    // عدد المستخدمين الذين لم يزوروا أبداً
-    const neverVisitedCount = users.filter(u => !u.gymVisits || u.gymVisits.length === 0).length;
+//     const statsByHour = {};
+//     allVisits.forEach(v => {
+//       const hour = new Date(v).getHours().toString().padStart(2, "0") + ":00";
+//       statsByHour[hour] = (statsByHour[hour] || 0) + 1;
+//     });
+//     const attendanceStats = Object.entries(statsByHour).map(([hour, attendees]) => ({ hour, attendees }));
 
-    // أكثر المستخدمين زيارة
-    let maxVisitsUser = null;
-    users.forEach(u => {
-      const count = (u.gymVisits || []).length;
-      if (!maxVisitsUser || count > maxVisitsUser.count) {
-        maxVisitsUser = { user: u, count };
-      }
-    });
+//     const avgVisitsPerUser = totalUsers > 0 ? (totalVisits / totalUsers).toFixed(2) : 0;
 
-    // تجميع الزيارات حسب الساعة كما قبل
-    const statsByHour = {};
-    allVisits.forEach(v => {
-      const hour = new Date(v).getHours().toString().padStart(2, "0") + ":00";
-      statsByHour[hour] = (statsByHour[hour] || 0) + 1;
-    });
-    const attendanceStats = Object.entries(statsByHour).map(([hour, attendees]) => ({
-      hour,
-      attendees,
-    }));
+//     const today = new Date();
 
-    // معدل الزيارات لكل مستخدم (بما فيهم الذين لم يزوروا)
-    const avgVisitsPerUser = totalUsers > 0 ? (totalVisits / totalUsers).toFixed(2) : 0;
+//     // الاشتراكات المنتهية حسب renewalDate
+//     const expiredUsers = users.filter(u => {
+//       if (!u.renewalDate) return false;
+//       const renewalDate = new Date(u.renewalDate);
+//       const expiryDate = new Date(renewalDate);
+//       expiryDate.setDate(expiryDate.getDate() + 30);
+//       return expiryDate <= today;
+//     }).length;
 
-    // الاشتراكات المنتهية والنشطة
-    const expiredUsers = users.filter(u => u.usedDays >= u.totalDays).length;
-    const activeUsers = totalUsers - expiredUsers;
+//     const activeUsers = totalUsers - expiredUsers;
+//     const test = 2
 
-    res.json({
-      totalUsers,
-      totalVisits,
-      neverVisitedCount,
-      maxVisitsUser: maxVisitsUser
-        ? { name: maxVisitsUser.user.name, visits: maxVisitsUser.count }
-        : null,
-      avgVisitsPerUser,
-      attendanceStats,
-      expiredUsers,
-      activeUsers,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "خطأ أثناء جلب الإحصائيات" });
-  }
-};
+//     // هنا اطبع كل القيم للتأكد
+//     console.log({
+//       totalUsers,
+//       totalVisits,
+//       neverVisitedCount,
+//       maxVisitsUser: maxVisitsUser
+//         ? { name: maxVisitsUser.user.name, visits: maxVisitsUser.count }
+//         : null,
+//       avgVisitsPerUser,
+//       attendanceStats,
+//       expiredUsers,
+//       activeUsers,
+//       users, // كل المستخدمين مع renewalDate للتأكد
+//     });
 
+//     res.json({
+//       users,
+//       totalUsers,
+//       totalVisits,
+//       neverVisitedCount,
+//       maxVisitsUser: maxVisitsUser
+//         ? { name: maxVisitsUser.user.name, visits: maxVisitsUser.count }
+//         : null,
+//       avgVisitsPerUser,
+//       attendanceStats,
+//       expiredUsers,
+//       activeUsers,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "خطأ أثناء جلب الإحصائيات" });
+//   }
+// };
 
 
 exports.NotiEmail = async (req, res) => {
@@ -405,15 +422,27 @@ cron.schedule("0 9 * * *", async () => {
 });
 
 
-
 exports.getDashboardStats = async (req, res) => {
   try {
-    // 1. الإحصائيات الأساسية (التي كانت موجودة سابقاً)
+    // 1️⃣ الإحصائيات الأساسية
     const totalUsers = await User.countDocuments();
-    const activeUsers = await User.countDocuments({ totalDays: { $gt: 0 } });
-    const expiredUsers = await User.countDocuments({ totalDays: { $lte: 0 } });
 
-    // حساب إجمالي الزيارات
+    const usersWithRenewal = await User.find({}, "renewalDate");
+    const today = new Date();
+
+    const expiredUsers = usersWithRenewal.filter(u => {
+      if (!u.renewalDate) return false;
+
+      const renewalDate = new Date(u.renewalDate);
+      const expiryDate = new Date(renewalDate);
+      expiryDate.setDate(expiryDate.getDate() + 30);
+
+      return expiryDate <= today;
+    }).length;
+
+    const activeUsers = totalUsers - expiredUsers;
+
+    // 2️⃣ حساب الزيارات
     const allUsers = await User.find({}, "gymVisits name");
     let totalVisits = 0;
     let neverVisitedCount = 0;
@@ -428,13 +457,14 @@ exports.getDashboardStats = async (req, res) => {
       }
     });
 
-    const avgVisitsPerUser = totalUsers > 0 ? (totalVisits / totalUsers).toFixed(1) : 0;
+    const avgVisitsPerUser =
+      totalUsers > 0 ? (totalVisits / totalUsers).toFixed(1) : 0;
 
-    // 2. تجميع بيانات الباقات مع تنظيف الأسماء (Trim) لمنع التكرار
-    const packageStatsRaw = await User.aggregate([
+    // 3️⃣ إحصائيات الباقات
+    const packageStats = await User.aggregate([
       {
         $group: {
-          _id: { $trim: { input: { $ifNull: ["$packageName", "غير محدد"] } } }, 
+          _id: { $trim: { input: { $ifNull: ["$packageName", "غير محدد"] } } },
           count: { $sum: 1 },
           totalPrice: { $sum: { $ifNull: ["$packagePrice", 0] } }
         }
@@ -449,33 +479,30 @@ exports.getDashboardStats = async (req, res) => {
       }
     ]);
 
-    // 3. تحليل ساعات الحضور
+    // 4️⃣ الحضور حسب الساعة
     const hourCounts = {};
     allUsers.forEach(u => {
-      u.gymVisits.forEach(v => {
+      (u.gymVisits || []).forEach(v => {
         const hour = v.split(" ")[1]?.split(":")[0];
         if (hour) hourCounts[hour] = (hourCounts[hour] || 0) + 1;
       });
     });
 
-    const attendanceStats = Object.keys(hourCounts).map(h => ({
-      hour: h + ":00",
-      attendees: hourCounts[h]
-    })).sort((a, b) => a.hour.localeCompare(b.hour));
+    const attendanceStats = Object.keys(hourCounts)
+      .map(h => ({ hour: h + ":00", attendees: hourCounts[h] }))
+      .sort((a, b) => a.hour.localeCompare(b.hour));
 
-    // إرسال كل شيء في استجابة واحدة
     res.json({
       totalUsers,
+      activeUsers,
+      expiredUsers,
       totalVisits,
       neverVisitedCount,
       maxVisitsUser,
       avgVisitsPerUser,
-      activeUsers,
-      expiredUsers,
-      packageStats: packageStatsRaw,
+      packageStats,
       attendanceStats
     });
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

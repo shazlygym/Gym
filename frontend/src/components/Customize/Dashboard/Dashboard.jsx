@@ -160,6 +160,28 @@ const Dashboard = () => {
       const years = Math.floor(months / 12);
       return `منذ ${years} سنة`;
     }
+
+
+    const renewalDate = users.renewalDate ? new Date(users.renewalDate) : null;
+    const today = new Date();
+    
+    let status = "ساري";
+    
+    if (renewalDate) {
+      const diffTime = today - renewalDate;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+      if (diffDays >= 30) {
+        status = "منتهي";
+      } else if (diffDays >= 21) {
+        status = "قارب على الانتهاء";
+      }
+
+      console.log("renewal:", users.renewalDate);
+console.log("days passed:", diffDays);
+
+    }
+    
     
 
   return (
@@ -208,6 +230,7 @@ const Dashboard = () => {
             <th className="px-1 py-3 text-right">الرقم التعريفي</th>
             <th className="px-1 py-3 text-right">الهاتف</th>
             <th className="px-1 py-3 text-right">تاريخ التسجيل</th>
+            <th className="px-1 py-3 text-center">تاريخ التجديد </th>
             <th className="px-1 py-3 text-right"> المدة</th>
             <th className="px-1 py-3 text-center">عدد الأيام</th>
             <th className="px-1 py-3 text-center">الأيام المستخدمة</th>
@@ -235,6 +258,23 @@ const Dashboard = () => {
              const isWarningByUsage = !isExpired && remainingDays <= 3;
              const isWarning = isWarningByDate || isWarningByUsage;
 
+
+             const renewalDate = user.renewalDate ? new Date(user.renewalDate) : null;
+           
+             let status = "ساري";
+           
+             if (renewalDate) {
+               const diffTime = today - renewalDate;
+               const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+           
+               if (diffDays >= 30) {
+                 status = "منتهي";
+               } else if (diffDays >= 21) {
+                 status = "قارب على الانتهاء";
+               }
+
+             
+              }
             return (
             <tr key={user._id} className="border-b hover:bg-gray-50 transition">
               <td className="px-1 py-3">{user.name}</td>
@@ -245,27 +285,40 @@ const Dashboard = () => {
                 {new Date(user.joinDate).toLocaleDateString("ar-EG")}
               </td>
               <td className="px-1 py-3 text-center">
-  {timeAgo(user.joinDate)}
+
+{new Date(user.renewalDate).toLocaleDateString("ar-EG")}
 </td>
+              <td className="px-1 py-3 text-center">
+  {timeAgo(user.renewalDate)}
+</td>
+
 
               <td className=" px-1 py-3 text-center">{user.totalDays}</td>
               <td className="px-1 py-3 text-center">{user.usedDays}</td>
-           
               <td className="p-4 text-center">
   {Array.isArray(user.gymVisits)
     ? user.gymVisits.at(-1)
     : user.gymVisits ?? "-"}
 </td>
-
-<td className="px-1 py-3 text-center">
-  {isExpired ? (
-    <span className="text-white bg-red px-2 py-1 rounded-md font-bold">منتهي</span>
-  ) : isWarning ? (
-    <span className="bg-black text-white px-2 py-1 rounded-md font-bold">قارب على الانتهاء</span>
+           
+            
+           
+              <td className="px-1 py-3 text-center">
+  {status === "منتهي" ? (
+    <span className="text-white bg-red px-2 py-1 rounded-md font-bold">
+      منتهي
+    </span>
+  ) : status === "قارب على الانتهاء" ? (
+    <span className="bg-black text-white px-2 py-1 rounded-md font-bold">
+      قارب على الانتهاء
+    </span>
   ) : (
-    <span className="bg-green text-white px-2 py-1 rounded-md font-bold">ساري</span>
+    <span className="bg-green text-white px-2 py-1 rounded-md font-bold">
+      ساري
+    </span>
   )}
 </td>
+
 
 <td className="px-1 py-3 text-center">{user.packagePrice}</td>
               <td className="px-1 py-3 text-center">{user.packageName}</td>

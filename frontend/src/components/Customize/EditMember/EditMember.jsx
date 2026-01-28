@@ -442,12 +442,28 @@ const EditMember = () => {
           </div>
 
           {/* تاريخ التسجيل */}
+          <h1>تاريخ التسجيل</h1>
           <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
             <FaCalendarAlt className="text-red-500 ml-3" />
             <input
               type="date"
               name="joinDate"
               value={member.joinDate ? member.joinDate.substring(0, 10) : ""}
+              onChange={handleChange}
+              placeholder="تاريخ التسجيل"
+              className="w-full bg-transparent outline-none text-gray-700"
+            />
+          </div>
+
+
+            {/* تاريخ التجديد */}
+            <h1>تاريخ التجديد</h1>
+            <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
+            <FaCalendarAlt className="text-red-500 ml-3" />
+            <input
+              type="date"
+              name="renewalDate"
+              value={member.renewalDate ? member.renewalDate.substring(0, 10) : ""}
               onChange={handleChange}
               placeholder="تاريخ التسجيل"
               className="w-full bg-transparent outline-none text-gray-700"

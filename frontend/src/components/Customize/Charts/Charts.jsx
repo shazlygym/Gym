@@ -20,6 +20,8 @@ const Charts = () => {
       try {
         const res = await axios.get(`${apiUrl}/dashboardStats`);
         setStats(res.data);
+        console.log("stats",res.data);
+        
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
     };
@@ -29,7 +31,23 @@ const Charts = () => {
   if (loading) return <p className="text-center p-10">جاري التحميل...</p>;
   if (!stats) return <p className="text-center p-10">لا توجد بيانات.</p>;
 
+  const subscriptionDurationDays = 30;
+
+  const expiredCount = stats.users
+    ? stats.users.filter(u => {
+        if (!u.renewalDate) return false;
+  
+        const renewalDate = new Date(u.renewalDate);
+        const expiryDate = new Date(renewalDate);
+        expiryDate.setDate(expiryDate.getDate() + subscriptionDurationDays);
+  
+        return expiryDate <= new Date();
+      }).length
+    : 0;
+  
+
   return (
+    
     <div className="p-6 bg-gray-50 min-h-screen font-sans" dir="rtl">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
@@ -44,7 +62,12 @@ const Charts = () => {
         <StatCard title="إجمالي المستخدمين" value={stats.totalUsers} />
         <StatCard title="إجمالي الزيارات" value={stats.totalVisits} />
         <StatCard title="نشطين الآن" value={stats.activeUsers} color="text-green-600" />
-        <StatCard title="اشتراكات منتهية" value={stats.expiredUsers} color="text-red-600" />
+        <StatCard
+  title="اشتراكات منتهية"
+  value={stats.expiredUsers}
+  color="text-red-600"
+/>
+
         <StatCard title="لم يزوروا أبداً" value={stats.neverVisitedCount} />
         <StatCard title="معدل الزيارة/فرد" value={stats.avgVisitsPerUser} />
         <div className="bg-white p-4 rounded shadow-sm border-t-4 border-blue-500 col-span-1 md:col-span-2">
