@@ -334,17 +334,21 @@ console.log("days passed:", diffDays);
                 >
                   حذف
                 </button>
+
+            
+                
                 <button
-                  onClick={() => handleAddVisit(user._id)}
-                  disabled={isExpired}
-                  className={`px-4 py-2 rounded-md text-sm transition ${
-                    isExpired
-                      ? "bg-gray-400 cursor-not-allowed text-white"
-                      : "bg-green hover:bg-green text-white"
-                  }`}
-                >
-                  تسجيل حضور
-                </button>
+  onClick={() => handleAddVisit(user._id)}
+  disabled={status=="منتهي"}
+  className={`px-4 py-2 rounded-md text-sm transition ${
+    status=="منتهي"
+      ? "bg-gray-400 cursor-not-allowed text-white"
+      : "bg-green hover:bg-green text-white"
+  }`}
+>
+  تسجيل الحضور
+</button>
+
                 <button
                   onClick={() => handleSendEmail(user._id)}
                   className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm"
@@ -359,10 +363,9 @@ console.log("days passed:", diffDays);
       </table>
     </div>
   
-    {/* بطاقات المستخدمين للشاشات الصغيرة */}
     <div className="md:hidden space-y-4">
       {currentUsers.map((user) => {
-        const joinDate = new Date(user.joinDate);
+        const joinDate = new Date(user.renewalDate);
         const today = new Date();
         const diffTime = today - joinDate;
         const daysSinceJoin = Math.floor(diffTime / (1000 * 60 * 60 * 24));
