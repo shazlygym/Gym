@@ -254,7 +254,7 @@ console.log("days passed:", diffDays);
              const isExpiredByUsage = remainingDays <= 0;
              const isExpired = isExpiredByDate || isExpiredByUsage;
      
-             const isWarningByDate = !isExpired && daysLeftInMonth <= 5;
+             const isWarningByDate = !isExpired && daysLeftInMonth <= 7;
              const isWarningByUsage = !isExpired && remainingDays <= 3;
              const isWarning = isWarningByDate || isWarningByUsage;
 
@@ -269,10 +269,9 @@ console.log("days passed:", diffDays);
            
                if (diffDays >= 30) {
                  status = "منتهي";
-               } else if (diffDays >= 21) {
+               } else if (diffDays >= 23) {
                  status = "قارب على الانتهاء";
                }
-
              
               }
             return (
