@@ -187,42 +187,64 @@ console.log("days passed:", diffDays);
 
   return (
     <div className="p-4 bg-gray-100 min-h-screen" dir="rtl">
-    <h1 className="text-3xl font-bold mb-6 text-gray-600">لوحة التحكم</h1>
-  
-    {/* 🔍 مربع البحث */}
-    <div className="mb-4 flex justify-start">
-      <input
-        type="text"
-        placeholder="ابحث عن مستخدم..."
-        value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setCurrentPage(1);
-        }}
-        className="p-2 border rounded-md w-full md:w-64 outline-none"
-      />
-    </div>
-  
-    {/* رابط إحصائيات */}
-    <Link to="/Charts">
-      <div className="flex items-center px-4 py-2 mb-4 bg-white shadow-md rounded-lg hover:bg-red-50 transition w-fit">
-        <FaChartBar className="text-red text-2xl" />
-        <h1 className="mx-3 font-semibold">إحصائيات</h1>
-      </div>
-    </Link>
-
-       <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 my-4 bg-white hover:bg-red-50 text-red px-4 py-2 rounded-lg shadow-md transition"
+    <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <h1 className="text-3xl font-bold text-gray-600">لوحة التحكم</h1>
+<div className="flex w-full items-center gap-2 rounded-lg border bg-white p-2 shadow-sm sm:w-80">
+          <input
+            type="text"
+            placeholder="ابحث عن المستخدم .."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full bg-transparent px-2 outline-none"
+          />
+          <button
+            type="button"
+           onClick={() => {
+              setSearch("");
+              setCurrentPage(1);
+            }}
+            disabled={!search}
+            className="rounded-md bg-red px-3 py-1 text-sm font-semibold text-white transition hover:bg-red-600"
           >
-            <FaArrowLeft className="text-red text-lg " />
+            حذف
+          </button>
+          <button
+            type="button"
+            disabled={!search}
+            className="rounded-md border px-3 py-1 text-sm font-semibold text-gray-600 transition hover:bg-green hover:text-white hover:border-white disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            بحث
+          </button>
+        </div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+        {}
+        
+
+        <div className="flex items-center gap-2">
+          {}
+          <Link
+            to="/Charts"
+            className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-md transition hover:bg-red-50"
+          >
+            <FaChartBar className="text-red text-xl" />
+            <span className="font-semibold">الاحصائيات</span>
+          </Link>
+
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-red shadow-md transition hover:bg-red-50"
+          >
+            <FaArrowLeft className="text-red text-lg" />
             <span className="font-semibold">رجوع</span>
           </button>
+        </div>
+      </div>
+    </div>
 
-   
-  
-    {/* جدول المستخدمين للشاشات الكبيرة */}
-    <div className="hidden md:block overflow-x-auto bg-white shadow-lg rounded-lg">
+<div className="hidden md:block overflow-x-auto bg-white shadow-lg rounded-lg">
       <table className="w-full table-auto border-collapse">
         <thead>
           <tr className="bg-red text-white">
