@@ -24,6 +24,20 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!modalData.isOpen) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Enter" || event.key === "Escape") {
+        event.preventDefault();
+        closeModal();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [modalData.isOpen]);
+
   // 🔹 جلب المستخدمين من الـ backend
   useEffect(() => {
     const fetchUsers = async () => {
