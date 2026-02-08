@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   FaUser,
@@ -8,6 +8,9 @@ import {
   FaCalendarCheck,
   FaComment,
   FaArrowLeft,
+  FaCheckCircle,
+  FaExclamationTriangle,
+  FaTimes,
 } from "react-icons/fa";
 import axios from "axios";
 
@@ -287,7 +290,24 @@ const EditMember = () => {
   const [member, setMember] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedPackageId, setSelectedPackageId] = useState(null);
-  const [videosName, setVideosName]=("")
+
+
+  // Modal state
+  const [modalData, setModalData] = useState({
+    isOpen: false,
+    type: "info", // info | success | warning | error
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
+
+  const openModal = ({ type = "info", title = "", message = "", onConfirm = null }) => {
+    setModalData({ isOpen: true, type, title, message, onConfirm });
+  };
+
+  const closeModal = () => {
+    setModalData((prev) => ({ ...prev, isOpen: false }));
+  };
 
   // جلب بيانات العضو من الـ backend
   useEffect(() => {
@@ -299,7 +319,7 @@ const EditMember = () => {
       })
       .catch((err) => {
         console.error(err);
-        alert("حدث خطأ أثناء تحميل البيانات");
+        openModal({ type: "error", title: "خطأ", message: "حدث خطأ أثناء تحميل البيانات" });
         setLoading(false);
       });
   }, [id]);
@@ -318,24 +338,21 @@ const EditMember = () => {
   // ✅ إضافة باقة فيديوهات
   const handleAddPackage = () => {
     if (!selectedPackageId) {
-      alert("اختر الباقة أولاً");
+      openModal({ type: "warning", title: "تنبيه", message: "اختر الباقة أولاً" });
       return;
     }
-  
-    const pkg = videoPackages.find(p => p.id === selectedPackageId);
+
+    const pkg = videoPackages.find((p) => p.id === selectedPackageId);
     if (!pkg) return;
-  
-    const updatedVideos = Array.from(
-      new Set([...(member.videos || []), ...pkg.videos])
-    );
-  
+
+    const updatedVideos = Array.from(new Set([...(member.videos || []), ...pkg.videos]));
+
     setMember({
       ...member,
       videos: updatedVideos,
-      videosName: pkg.name // 👈 تخزين اسم الباقة الأخيرة
     });
-  
-    alert(`تم إضافة باقة الفيديوهات: ${pkg.name}`);
+
+    openModal({ type: "success", title: "تمت الإضافة", message: `تم إضافة باقة الفيديوهات: ${pkg.name}` });
   };
   
   
@@ -351,11 +368,15 @@ const EditMember = () => {
     e.preventDefault();
     try {
       await axios.put(`${apiUrl}/EditUser/${id}`, member);
-      alert("تم تحديث بيانات العضو بنجاح!");
-      navigate("/Dashboard");
+      openModal({
+        type: "success",
+        title: "تم الحفظ",
+        message: "تم تحديث بيانات العضو بنجاح!",
+        onConfirm: () => navigate("/Dashboard"),
+      });
     } catch (err) {
       console.error(err);
-      alert("حدث خطأ أثناء حفظ البيانات");
+      openModal({ type: "error", title: "خطأ", message: "حدث خطأ أثناء حفظ البيانات" });
     }
   };
 
@@ -365,249 +386,235 @@ const EditMember = () => {
     return <div className="text-center mt-20 text-lg">لم يتم العثور على العضو</div>;
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center p-6">
-      <div className="bg-white shadow-2xl rounded-3xl p-10 w-full max-w-2xl">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 mb-6 text-black border-md border-2 border-black  hover:text-white  hover:bg-black rounded-md p-2 transition font-bold"
-        >
-          <span>رجوع</span>
-          <FaArrowLeft />
-        </button>
-        <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">
-          تعديل بيانات العضو
-        </h1>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
-          
-            <input
-              type="number"
-              name="seq"
-              value={member.seq || ""}
-              onChange={handleChange}
-              placeholder="الرقم التعريفي"
-              className="w-full bg-transparent outline-none text-gray-700"
-            />
-          </div>
-          {/* الاسم */}
-          <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
-            <FaUser className="text-red-500 ml-3" />
-            <input
-              type="text"
-              name="name"
-              value={member.name || ""}
-              onChange={handleChange}
-              placeholder="الاسم"
-              className="w-full bg-transparent outline-none text-gray-700"
-            />
-          </div>
-
-          {/* المدير */}
-          <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
-            <FaUser className="text-red-500 ml-3" />
-            <input
-              type="checkbox"
-              name="admin"
-              checked={member.admin || false}
-              onChange={handleChange}
-              className=" bg-transparent outline-none text-gray-700 w-5 h-5"
-            />
-          </div>
-
-          {/* البريد الالكتروني */}
-          <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
-            <FaEnvelope className="text-red-500 ml-3" />
-            <input
-              type="email"
-              name="email"
-              value={member.email || ""}
-              onChange={handleChange}
-              placeholder="البريد الالكتروني"
-              className="w-full bg-transparent outline-none text-gray-700"
-            />
-          </div>
-
-          {/* رقم الهاتف */}
-          <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
-            <FaPhone className="text-red-500 ml-3" />
-            <input
-              type="text"
-              name="mobileNumber"
-              value={member.mobileNumber || ""}
-              onChange={handleChange}
-              placeholder="رقم الموبايل"
-              className="w-full bg-transparent outline-none text-gray-700"
-            />
-          </div>
-
-          {/* تاريخ التسجيل */}
-          <h1>تاريخ التسجيل</h1>
-          <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
-            <FaCalendarAlt className="text-red-500 ml-3" />
-            <input
-              type="date"
-              name="joinDate"
-              value={member.joinDate ? member.joinDate.substring(0, 10) : ""}
-              onChange={handleChange}
-              placeholder="تاريخ التسجيل"
-              className="w-full bg-transparent outline-none text-gray-700"
-            />
-          </div>
-
-
-            {/* تاريخ التجديد */}
-            <h1>تاريخ التجديد</h1>
-            <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
-            <FaCalendarAlt className="text-red-500 ml-3" />
-            <input
-              type="date"
-              name="renewalDate"
-              value={member.renewalDate ? member.renewalDate.substring(0, 10) : ""}
-              onChange={handleChange}
-              placeholder="تاريخ التسجيل"
-              className="w-full bg-transparent outline-none text-gray-700"
-            />
-          </div>
-
-          {/* عدد الأيام المسجلة */}
-          <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
-            <FaCalendarCheck className="text-red-500 ml-3" />
-            <input
-              type="number"
-              name="totalDays"
-              value={member.totalDays || ""}
-              onChange={handleChange}
-              placeholder="الايام المسجلة"
-              className="w-full bg-transparent outline-none text-gray-700"
-            />
-          </div>
-
-          {/* الأيام المستخدمة */}
-          <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
-            <FaCalendarCheck className="text-red-500 ml-3" />
-            <input
-              type="number"
-              name="usedDays"
-              value={member.usedDays || ""}
-              onChange={handleChange}
-              placeholder="الايام المستخدمة"
-              className="w-full bg-transparent outline-none text-gray-700"
-            />
-          </div>
-
-          {/* التعليق */}
-          <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
-            <FaComment className="text-red-500 ml-3" />
-            <input
-              type="text"
-              name="comment"
-              value={member.comment || ""}
-              onChange={handleChange}
-              placeholder="تعليق"
-              className="w-full bg-transparent outline-none text-gray-700"
-            />
-          </div>
-
-
-
-          <div>
-  <label className="block text-sm font-medium">اسم الباقة</label>
-  <select
-    name="packageName"
-    value={member.packageName}
-    onChange={handleChange}
-    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
-    required
-  >
-    <option value="" disabled>
-      اختر اسم الباقة
-    </option>
-    <option value="الاولى">الاولى</option>
-    <option value="الثانية ">الثانية </option>
-    <option value="الثالثة">الثالثة </option>
-  </select>
-</div>
-
-
-<div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
-            <FaUser className="text-red-500 ml-3" />
-            <input
-              type="number"
-              name="packagePrice"
-              value={member.packagePrice || ""}
-              onChange={handleChange}
-              placeholder=" قيمة الباقة"
-              className="w-full bg-transparent outline-none text-gray-700"
-            />
-          </div>
-
-        
-          {/* اختيار باقة الفيديوهات */}
-          <div className="my-4">
-            <h3 className="text-lg font-semibold mb-2">اختر باقة فيديوهات</h3>
-          
-
-            <select
-              value={selectedPackageId || ""}
-              onChange={(e) => setSelectedPackageId(Number(e.target.value))}
-              className="border rounded-xl px-3 py-2 mb-2 w-full"
-            >
-              <option value="">-- اختر باقة --</option>
-              {videoPackages.map((pkg) => (
-                <option key={pkg.id} value={pkg.id}>
-                  {pkg.name} ({pkg.videos.length} فيديو)
-                </option>
-              ))}
-            </select>
-            <button
-              type="button"
-              onClick={handleAddPackage}
-              className="bg-blue text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition"
-            >
-              إضافة الباقة
-            </button>
-          </div>
-
-          {/* عرض الفيديوهات الحالية */}
-          {member.videos && member.videos.length > 0 ? (
-            <ul className="space-y-2 mb-4">
-              {member.videos.map((video, index) => (
-                <li
-                  key={index}
-                  className="flex justify-between items-center bg-white p-2 rounded-lg shadow-sm"
-                >
-                  <a
-                    href={video}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 underline truncate w-4/5"
-                  >
-                    {video}
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveVideo(index)}
-                    className="text-red-500 hover:text-red-700 font-semibold"
-                  >
-                    حذف
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-500 mb-3">لا توجد فيديوهات حالياً</p>
-          )}
-
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex justify-center items-center p-6" dir="rtl">
+        <div className="bg-white shadow-2xl rounded-3xl p-10 w-full max-w-5xl">
           <button
-            type="submit"
-            className="w-full bg-red hover:bg-red-600 text-white py-3 rounded-2xl font-semibold text-lg transition"
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 mb-6 text-black border-md border-2 border-black hover:text-white hover:bg-black rounded-md p-2 transition font-bold"
           >
-            حفظ التغيرات
+            <span>رجوع</span>
+            <FaArrowLeft />
           </button>
-        </form>
+          <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">تعديل بيانات العضو</h1>
+
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {/* البيانات الشخصية */}
+            <div className="rounded-2xl border border-gray-200 bg-white/80 p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <FaUser className="text-red-500" />
+                <h2 className="text-lg font-bold text-gray-800">البيانات الشخصية</h2>
+              </div>
+              <div className="grid grid-cols-4 md:grid-cols-4 gap-4">
+                <div className="border rounded-xl px-4 py-2 bg-gray-50 hover:bg-gray-100 hover:border-gray-400 focus-within:bg-white focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500 transition-colors duration-200">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">الرقم التعريفي</label>
+                  <input type="number" name="seq" value={member.seq || ""} onChange={handleChange} placeholder="الرقم التعريفي" className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 hover:text-gray-900 focus:text-gray-900 transition-colors duration-200" />
+                </div>
+                <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 hover:bg-gray-100 hover:border-gray-400 focus-within:bg-white focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500 transition-colors duration-200">
+                  <FaUser className="text-red-500 ml-3" />
+                  <input type="text" name="name" value={member.name || ""} onChange={handleChange} placeholder="الاسم" className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 hover:text-gray-900 focus:text-gray-900 transition-colors duration-200" />
+                </div>
+                <div className="flex items-center justify-between border rounded-xl px-4 py-2 bg-gray-50 hover:bg-gray-100 hover:border-gray-400 focus-within:bg-white focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500 transition-colors duration-200 md:col-span-2">
+                  <span className="text-sm font-medium text-gray-700">مدير</span>
+                  <input type="checkbox" name="admin" checked={member.admin || false} onChange={handleChange} className="w-5 h-5" />
+                </div>
+              </div>
+            </div>
+
+            {/* معلومات التواصل */}
+            <div className="rounded-2xl border border-gray-200 bg-white/80 p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <FaEnvelope className="text-red-500" />
+                <h2 className="text-lg font-bold text-gray-800">معلومات التواصل</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 hover:bg-gray-100 hover:border-gray-400 focus-within:bg-white focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500 transition-colors duration-200">
+                  <FaEnvelope className="text-red-500 ml-3" />
+                  <input type="email" name="email" value={member.email || ""} onChange={handleChange} placeholder="البريد الالكتروني" className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 hover:text-gray-900 focus:text-gray-900 transition-colors duration-200" />
+                </div>
+                <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 hover:bg-gray-100 hover:border-gray-400 focus-within:bg-white focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500 transition-colors duration-200">
+                  <FaPhone className="text-red-500 ml-3" />
+                  <input type="text" name="mobileNumber" value={member.mobileNumber || ""} onChange={handleChange} placeholder="رقم الموبايل" className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 hover:text-gray-900 focus:text-gray-900 transition-colors duration-200" />
+                </div>
+              </div>
+            </div>
+
+            {/* المواعيد */}
+            <div className="rounded-2xl border border-gray-200 bg-white/80 p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <FaCalendarAlt className="text-red-500" />
+                <h2 className="text-lg font-bold text-gray-800">المواعيد</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">تاريخ التسجيل</label>
+                  <div className="flex items-center">
+                    <FaCalendarAlt className="text-red-500 ml-3" />
+                    <input type="date" name="joinDate" value={member.joinDate ? member.joinDate.substring(0, 10) : ""} onChange={handleChange} className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 hover:text-gray-900 focus:text-gray-900 transition-colors duration-200" />
+                  </div>
+                </div>
+                <div className="border rounded-xl px-4 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-red-500 transition">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">تاريخ التجديد</label>
+                  <div className="flex items-center">
+                    <FaCalendarAlt className="text-red-500 ml-3" />
+                    <input type="date" name="renewalDate" value={member.renewalDate ? member.renewalDate.substring(0, 10) : ""} onChange={handleChange} className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 hover:text-gray-900 focus:text-gray-900 transition-colors duration-200" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* الأيام */}
+            <div className="rounded-2xl border border-gray-200 bg-white/80 p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <FaCalendarCheck className="text-red-500" />
+                <h2 className="text-lg font-bold text-gray-800">الأيام</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 hover:bg-gray-100 hover:border-gray-400 focus-within:bg-white focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500 transition-colors duration-200">
+                  <FaCalendarCheck className="text-red-500 ml-3" />
+                  <input type="number" name="totalDays" value={member.totalDays || ""} onChange={handleChange} placeholder="الايام المسجلة" className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 hover:text-gray-900 focus:text-gray-900 transition-colors duration-200" />
+                </div>
+                <div className="flex items-center border rounded-xl px-4 py-2 bg-gray-50 hover:bg-gray-100 hover:border-gray-400 focus-within:bg-white focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500 transition-colors duration-200">
+                  <FaCalendarCheck className="text-red-500 ml-3" />
+                  <input type="number" name="usedDays" value={member.usedDays || ""} onChange={handleChange} placeholder="الايام المستخدمة" className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 hover:text-gray-900 focus:text-gray-900 transition-colors duration-200" />
+                </div>
+              </div>
+            </div>
+
+            {/* الملاحظات */}
+            <div className="rounded-2xl border border-gray-200 bg-white/80 p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <FaComment className="text-red-500" />
+                <h2 className="text-lg font-bold text-gray-800">ملاحظات</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="border rounded-xl px-4 py-2 bg-gray-50 hover:bg-gray-100 hover:border-gray-400 focus-within:bg-white focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500 transition-colors duration-200 md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">تعليق</label>
+                  <input type="text" name="comment" value={member.comment || ""} onChange={handleChange} placeholder="تعليق" className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 hover:text-gray-900 focus:text-gray-900 transition-colors duration-200" />
+                </div>
+              </div>
+            </div>
+
+            {/* تفاصيل الباقة */}
+            <div className="rounded-2xl border border-gray-200 bg-white/80 p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <FaUser className="text-red-500" />
+                <h2 className="text-lg font-bold text-gray-800">تفاصيل الباقة</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium">اسم الباقة</label>
+                  <select name="packageName" value={member.packageName} onChange={handleChange} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 hover:border-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-500 transition-colors duration-200" required>
+                    <option value="" disabled>اختر اسم الباقة</option>
+                    <option value="الاولى">الاولى</option>
+                    <option value="الثانية ">الثانية </option>
+                    <option value="الثالثة">الثالثة </option>
+                  </select>
+                </div>
+                <div className="border rounded-xl px-4 py-2 bg-gray-50 hover:bg-gray-100 hover:border-gray-400 focus-within:bg-white focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500 transition-colors duration-200">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">قيمة الباقة</label>
+                  <div className="flex items-center">
+                    <FaUser className="text-red-500 ml-3" />
+                    <input type="number" name="packagePrice" value={member.packagePrice || ""} onChange={handleChange} placeholder=" قيمة الباقة" className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 hover:text-gray-900 focus:text-gray-900 transition-colors duration-200" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* باقات الفيديو */}
+            <div className="rounded-2xl border border-gray-200 bg-white/80 p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <FaComment className="text-red-500" />
+                <h2 className="text-lg font-bold text-gray-800">باقات الفيديو</h2>
+              </div>
+              <div>
+                <select value={selectedPackageId || ""} onChange={(e) => setSelectedPackageId(Number(e.target.value))} className="border rounded-xl px-3 py-2 mb-2 w-full hover:border-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-500 transition-colors duration-200">
+                  <option value="">-- اختر باقة --</option>
+                  {videoPackages.map((pkg) => (
+                    <option key={pkg.id} value={pkg.id}>
+                      {pkg.name} ({pkg.videos.length} فيديو)
+                    </option>
+                  ))}
+                </select>
+                <button type="button" onClick={handleAddPackage} className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition">إضافة الباقة</button>
+              </div>
+            </div>
+
+            {/* الفيديوهات الحالية */}
+            {member.videos && member.videos.length > 0 ? (
+              <div className="rounded-2xl border border-gray-200 bg-white/80 p-5 shadow-sm">
+                <div className="flex items-center gap-2 mb-3">
+                  <FaComment className="text-red-500" />
+                  <h2 className="text-lg font-bold text-gray-800">الفيديوهات المضافة</h2>
+                </div>
+                <ul className="space-y-2 mb-2">
+                  {member.videos.map((video, index) => (
+                    <li key={index} className="flex justify-between items-center bg-white p-2 rounded-lg shadow-sm">
+                      <a href={video} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline truncate w-4/5">{video}</a>
+                      <button type="button" onClick={() => handleRemoveVideo(index)} className="text-red-500 hover:text-red-700 font-semibold">حذف</button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <p className="text-gray-500">لا توجد فيديوهات حالياً</p>
+            )}
+
+            <button type="submit" className="w-full bg-red hover:bg-red-600 text-white py-3 rounded-2xl font-semibold text-lg transition">حفظ التغيرات</button>
+          </form>
+        </div>
       </div>
-    </div>
+
+      {modalData.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white w-11/12 max-w-md rounded-2xl shadow-xl p-6">
+            <div className="flex items-start gap-4">
+              <div className={`flex items-center justify-center w-12 h-12 rounded-full ${
+                modalData.type === "success"
+                  ? "bg-green-100 text-green-600"
+                  : modalData.type === "error"
+                  ? "bg-red-100 text-red-600"
+                  : modalData.type === "warning"
+                  ? "bg-yellow-100 text-yellow-600"
+                  : "bg-blue-100 text-blue-600"
+              }`}>
+                {modalData.type === "success" && <FaCheckCircle className="text-2xl" />}
+                {modalData.type === "error" && <FaTimes className="text-2xl" />}
+                {modalData.type === "warning" && <FaExclamationTriangle className="text-2xl" />}
+                {modalData.type === "info" && <FaComment className="text-2xl" />}
+              </div>
+
+              <div className="flex-1">
+                <h2 className="text-xl font-bold text-gray-800 mb-1">{modalData.title}</h2>
+                <p className="text-gray-600">{modalData.message}</p>
+              </div>
+
+              <button
+                onClick={closeModal}
+                className="text-gray-400 hover:text-gray-600"
+                aria-label="إغلاق"
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  if (typeof modalData.onConfirm === "function") {
+                    modalData.onConfirm();
+                  }
+                  closeModal();
+                }}
+                className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
+              >
+                حسناً
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
