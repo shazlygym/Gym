@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaChartBar } from "react-icons/fa";
+import { FaArrowLeft, FaChartBar, FaWhatsapp } from "react-icons/fa";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
 
@@ -23,6 +23,22 @@ const Dashboard = () => {
   const closeModal = () => setModalData({ ...modalData, isOpen: false });
 
   const navigate = useNavigate();
+
+  // Build WhatsApp link from a raw phone number (digits only)
+  const buildWhatsAppLink = (rawNumber) => {
+    let num = String(rawNumber || "").replace(/[^\d]/g, "");
+
+    // If number starts with 0 (local format), convert to Egypt country code 20
+    if (num.startsWith("0")) {
+      num = `20${num.slice(1)}`;
+    } else if (!num.startsWith("20")) {
+      // If country code is missing, default to 20 (Egypt)
+      num = `20${num}`;
+    }
+
+    // Use WhatsApp API to open chat directly
+    return `https://api.whatsapp.com/send?phone=${num}`;
+  };
 
   useEffect(() => {
     if (!modalData.isOpen) return;
@@ -373,12 +389,11 @@ console.log("days passed:", diffDays);
                 </button>
 
             
-                
                 <button
   onClick={() => handleAddVisit(user._id)}
-  disabled={status=="منتهي"}
+  disabled={status==="منتهي"}
   className={`px-4 py-2 rounded-md text-sm transition ${
-    status=="منتهي"
+    status === "منتهي"
       ? "bg-gray-400 cursor-not-allowed text-white"
       : "bg-green hover:bg-green text-white"
   }`}
@@ -386,12 +401,24 @@ console.log("days passed:", diffDays);
   تسجيل الحضور
 </button>
 
-                <button
-                  onClick={() => handleSendEmail(user._id)}
-                  className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm"
-                >
-                   ارسال ايميل 
-                </button>
+  {user.mobileNumber && (
+    <a
+      href={buildWhatsAppLink(user.mobileNumber)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="bg-green hover:bg-green text-white px-4 py-2 rounded-md text-sm flex items-center gap-2"
+    >
+      <FaWhatsapp className="text-white" />
+      واتساب
+    </a>
+  )}
+
+  <button
+    onClick={() => handleSendEmail(user._id)}
+    className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm"
+  >
+    ارسال ايميل 
+  </button>
               </td>
             </tr>
             );
@@ -475,6 +502,19 @@ console.log("days passed:", diffDays);
             >
               تسجيل الحضور
             </button>
+
+            {user.mobileNumber && (
+              <a
+                href={buildWhatsAppLink(user.mobileNumber)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-green hover:bg-green text-white px-4 py-2 rounded-md text-sm w-full flex items-center justify-center gap-2"
+              >
+                <FaWhatsapp className="text-white" />
+                واتساب
+              </a>
+            )}
+
             <button
               onClick={() => handleSendEmail(user._id)}
               className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm w-full"
