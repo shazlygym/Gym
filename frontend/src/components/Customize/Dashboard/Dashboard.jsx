@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaChartBar, FaWhatsapp } from "react-icons/fa";
+import { FaArrowLeft, FaChartBar, FaWhatsapp, FaSpinner } from "react-icons/fa";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
 
@@ -11,6 +11,7 @@ const Dashboard = () => {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1); // 🆕 الصفحة الحالية
   const usersPerPage = 10; // 🆕 عدد المستخدمين في كل صفحة
+  const [visitingId, setVisitingId] = useState(null); // 🆕 حالة التحميل لزر تسجيل الحضور
 
   // Modal State
   const [modalData, setModalData] = useState({
@@ -26,18 +27,30 @@ const Dashboard = () => {
 
   // Build WhatsApp link from a raw phone number (digits only)
   const buildWhatsAppLink = (rawNumber) => {
+    // Keep only digits
     let num = String(rawNumber || "").replace(/[^\d]/g, "");
 
-    // If number starts with 0 (local format), convert to Egypt country code 20
-    if (num.startsWith("0")) {
-      num = `20${num.slice(1)}`;
-    } else if (!num.startsWith("20")) {
-      // If country code is missing, default to 20 (Egypt)
-      num = `20${num}`;
+    if (!num) return "https://wa.me/"; // fallback
+
+    // Handle numbers starting with 00 (international prefix)
+    if (num.startsWith("00")) {
+      num = num.slice(2);
     }
 
-    // Use WhatsApp API to open chat directly
-    return `https://api.whatsapp.com/send?phone=${num}`;
+    const DEFAULT_COUNTRY_CODE = "20"; // Egypt
+
+    // If already includes country code (e.g., 20...), keep as is
+    if (num.startsWith(DEFAULT_COUNTRY_CODE)) {
+      return `https://wa.me/${num}`;
+    }
+
+    // Remove leading 0 from local numbers (e.g., 011..., 012..., etc.)
+    if (num.startsWith("0")) {
+      num = num.slice(1);
+    }
+
+    // Prefix default country code
+    return `https://wa.me/${DEFAULT_COUNTRY_CODE}${num}`;
   };
 
   useEffect(() => {
@@ -84,6 +97,7 @@ const Dashboard = () => {
       return;
     }
 
+    setVisitingId(id);
     try {
       const res = await axios.post(`${apiUrl}/addGymVisit/${id}`);
       setModalData({
@@ -105,6 +119,8 @@ const Dashboard = () => {
         message: "حدث خطأ أثناء تسجيل الزيارة",
         type: "error",
       });
+    } finally {
+      setVisitingId(null);
     }
   };
 
@@ -391,14 +407,21 @@ console.log("days passed:", diffDays);
             
                 <button
   onClick={() => handleAddVisit(user._id)}
-  disabled={status==="منتهي"}
+  disabled={status === "منتهي" || visitingId === user._id}
   className={`px-4 py-2 rounded-md text-sm transition ${
     status === "منتهي"
       ? "bg-gray-400 cursor-not-allowed text-white"
       : "bg-green hover:bg-green text-white"
-  }`}
+  } ${visitingId === user._id ? "opacity-70 cursor-wait" : ""}`}
 >
-  تسجيل الحضور
+  {visitingId === user._id ? (
+    <span className="flex items-center gap-2">
+      <FaSpinner className="animate-spin" />
+      جاري التسجيل...
+    </span>
+  ) : (
+    "تسجيل الحضور"
+  )}
 </button>
 
   {user.mobileNumber && (
@@ -493,22 +516,29 @@ console.log("days passed:", diffDays);
            
             <button
               onClick={() => handleAddVisit(user._id)}
-              disabled={isExpired}
+              disabled={isExpired || visitingId === user._id}
               className={`px-4 py-2 rounded-md text-sm w-full transition ${
                 isExpired
                   ? "bg-gray-400 cursor-not-allowed text-white"
                   : "bg-green hover:bg-green text-white"
-              }`}
-            >
-              تسجيل الحضور
-            </button>
+              } ${visitingId === user._id ? "opacity-70 cursor-wait" : ""}`}
+          >
+            {visitingId === user._id ? (
+              <span className="flex items-center justify-center gap-2 w-full">
+                <FaSpinner className="animate-spin" />
+                جاري التسجيل...
+              </span>
+            ) : (
+              "تسجيل الحضور"
+            )}
+          </button>
 
             {user.mobileNumber && (
               <a
                 href={buildWhatsAppLink(user.mobileNumber)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-green hover:bg-green text-white px-4 py-2 rounded-md text-sm w-full flex items-center justify-center gap-2"
+                className="bg-green hover:bg-green-500 text-white px-4 py-2 rounded-md text-sm w-full flex items-center justify-center gap-2"
               >
                 <FaWhatsapp className="text-white" />
                 واتساب
