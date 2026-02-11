@@ -435,13 +435,13 @@ console.log("days passed:", diffDays);
       واتساب
     </a>
   )}
-
+{/* 
   <button
     onClick={() => handleSendEmail(user._id)}
     className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm"
   >
     ارسال ايميل 
-  </button>
+  </button> */}
               </td>
             </tr>
             );
