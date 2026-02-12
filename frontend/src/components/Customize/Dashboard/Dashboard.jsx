@@ -21,12 +21,20 @@ const Dashboard = () => {
     type: "success", // success | error | warning
   });
 
+  // WhatsApp Modal State
+  const [whatsappModal, setWhatsappModal] = useState({
+    isOpen: false,
+    userId: null,
+    userPhone: null,
+  });
+
   const closeModal = () => setModalData({ ...modalData, isOpen: false });
+  const closeWhatsappModal = () => setWhatsappModal({ isOpen: false, userId: null, userPhone: null });
 
   const navigate = useNavigate();
 
   // Build WhatsApp link from a raw phone number (digits only)
-  const buildWhatsAppLink = (rawNumber) => {
+  const buildWhatsAppLink = (rawNumber, message = "") => {
     // Keep only digits
     let num = String(rawNumber || "").replace(/[^\d]/g, "");
 
@@ -40,17 +48,38 @@ const Dashboard = () => {
     const DEFAULT_COUNTRY_CODE = "20"; // Egypt
 
     // If already includes country code (e.g., 20...), keep as is
+    let whatsappLink = "";
     if (num.startsWith(DEFAULT_COUNTRY_CODE)) {
-      return `https://wa.me/${num}`;
+      whatsappLink = `https://wa.me/${num}`;
+    } else {
+      // Remove leading 0 from local numbers (e.g., 011..., 012..., etc.)
+      if (num.startsWith("0")) {
+        num = num.slice(1);
+      }
+      // Prefix default country code
+      whatsappLink = `https://wa.me/${DEFAULT_COUNTRY_CODE}${num}`;
     }
 
-    // Remove leading 0 from local numbers (e.g., 011..., 012..., etc.)
-    if (num.startsWith("0")) {
-      num = num.slice(1);
+    // Add message if provided
+    if (message) {
+      whatsappLink += `?text=${encodeURIComponent(message)}`;
     }
 
-    // Prefix default country code
-    return `https://wa.me/${DEFAULT_COUNTRY_CODE}${num}`;
+    return whatsappLink;
+  };
+
+  // Handle opening WhatsApp modal
+  const handleWhatsAppClick = (userId, userPhone) => {
+    setWhatsappModal({ isOpen: true, userId, userPhone });
+  };
+
+  // Handle sending WhatsApp message with selected template
+  const handleSendWhatsAppMessage = (message) => {
+    if (whatsappModal.userPhone) {
+      const link = buildWhatsAppLink(whatsappModal.userPhone, message);
+      window.open(link, "_blank");
+      closeWhatsappModal();
+    }
   };
 
   useEffect(() => {
@@ -425,15 +454,13 @@ console.log("days passed:", diffDays);
 </button>
 
   {user.mobileNumber && (
-    <a
-      href={buildWhatsAppLink(user.mobileNumber)}
-      target="_blank"
-      rel="noopener noreferrer"
+    <button
+      onClick={() => handleWhatsAppClick(user._id, user.mobileNumber)}
       className="bg-green hover:bg-green text-white px-4 py-2 rounded-md text-sm flex items-center gap-2"
     >
       <FaWhatsapp className="text-white" />
       واتساب
-    </a>
+    </button>
   )}
 {/* 
   <button
@@ -534,15 +561,13 @@ console.log("days passed:", diffDays);
           </button>
 
             {user.mobileNumber && (
-              <a
-                href={buildWhatsAppLink(user.mobileNumber)}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => handleWhatsAppClick(user._id, user.mobileNumber)}
                 className="bg-green hover:bg-green-500 text-white px-4 py-2 rounded-md text-sm w-full flex items-center justify-center gap-2"
               >
                 <FaWhatsapp className="text-white" />
                 واتساب
-              </a>
+              </button>
             )}
 
             <button
@@ -605,6 +630,43 @@ console.log("days passed:", diffDays);
             }`}
           >
             حسناً
+          </button>
+        </div>
+      </div>
+    )}
+
+    {/* WhatsApp Message Selection Modal */}
+    {whatsappModal.isOpen && (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        onClick={closeWhatsappModal}
+      >
+        <div
+          className="bg-white rounded-lg shadow-lg w-11/12 md:w-2/3 p-6 text-center transform transition-all scale-100"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h2 className="text-2xl font-bold mb-6 text-gray-800">اختر رسالة</h2>
+          <div className="flex flex-col gap-4 md:flex-row md:justify-center">
+            <button
+              onClick={() => handleSendWhatsAppMessage("مرحبا بك في ايجل جيم.")}
+              className="flex-1 bg-green hover:bg-green text-white px-6 py-3 rounded-lg font-bold text-lg transition"
+            >
+              رسالة الترحيب 👋
+              <p className="text-sm mt-2 font-normal">مرحبا بك في ايجل جيم.</p>
+            </button>
+            <button
+              onClick={() => handleSendWhatsAppMessage("مرحبا، تم انتهاء الباقة")}
+              className="flex-1 bg-red hover:bg-red text-white px-6 py-3 rounded-lg font-bold text-lg transition"
+            >
+              رسالة انتهاء الباقة ⏰
+              <p className="text-sm mt-2 font-normal">مرحبا، تم انتهاء الباقة</p>
+            </button>
+          </div>
+          <button
+            onClick={closeWhatsappModal}
+            className="mt-6 px-6 py-2 text-gray-600 font-bold rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+          >
+            إلغاء
           </button>
         </div>
       </div>
