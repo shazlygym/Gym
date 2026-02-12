@@ -652,24 +652,45 @@ console.log("days passed:", diffDays);
         onClick={closeWhatsappModal}
       >
         <div
-          className="bg-white rounded-lg shadow-lg w-11/12 md:w-2/3 p-6 text-center transform transition-all scale-100"
+          className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 p-6 text-center transform transition-all scale-100 max-h-screen overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           <h2 className="text-2xl font-bold mb-6 text-gray-800">اختر رسالة</h2>
-          <div className="flex flex-col gap-4 md:flex-row md:justify-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <button
               onClick={() => handleSendWhatsAppMessage("مرحبا بك في ايجل جيم.")}
-              className="flex-1 bg-green hover:bg-green text-white px-6 py-3 rounded-lg font-bold text-lg transition"
+              className="bg-blue hover:bg-blue text-white px-4 py-3 rounded-lg font-bold transition"
             >
               رسالة الترحيب 👋
-              <p className="text-sm mt-2 font-normal">مرحبا بك في ايجل جيم.</p>
+              <p className="text-xs mt-2 font-normal">مرحبا بك في ايجل جيم.</p>
             </button>
             <button
-              onClick={() => handleSendWhatsAppMessage("مرحبا، تم انتهاء الباقة")}
-              className="flex-1 bg-red hover:bg-red text-white px-6 py-3 rounded-lg font-bold text-lg transition"
+              onClick={() => handleSendWhatsAppMessage("نتمنى أن تكون بخير، لم نرك منذ فترة. نحن ننتظر عودتك!")}
+              className="bg-[#b68a35] hover:bg-[#b68a35] text-white px-4 py-3 rounded-lg font-bold transition"
             >
-              رسالة انتهاء الباقة ⏰
-              <p className="text-sm mt-2 font-normal">مرحبا، تم انتهاء الباقة</p>
+              رسالة الغياب 🤔
+              <p className="text-xs mt-2 font-normal">لم نرك منذ فترة</p>
+            </button>
+            <button
+              onClick={() => handleSendWhatsAppMessage("مرحبا، اشتراكك على وشك الانتهاء قريبا جدا. يرجى التجديد.")}
+              className="bg-[#E54B1D] hover:bg-[#E54B1D] text-white px-4 py-3 rounded-lg font-bold transition"
+            >
+              انتهاء قريب ⏰
+              <p className="text-xs mt-2 font-normal">الاشتراك على وشك الانتهاء</p>
+            </button>
+            <button
+              onClick={() => handleSendWhatsAppMessage("مرحبا، تم انتهاء اشتراكك. يرجى التجديد لمتابعة التدريبات.")}
+              className="bg-red hover:bg-red text-white px-4 py-3 rounded-lg font-bold transition"
+            >
+              انتهاء الاشتراك ❌
+              <p className="text-xs mt-2 font-normal">انتهى الاشتراك</p>
+            </button>
+            <button
+              onClick={() => handleSendWhatsAppMessage("شكرا لك على تجديد اشتراكك معنا! نتطلع لرؤيتك قريبا.")}
+              className="bg-green hover:bg-green text-white px-4 py-3 rounded-lg font-bold transition"
+            >
+              تجديد الاشتراك ✅
+              <p className="text-xs mt-2 font-normal">شكرا على التجديد</p>
             </button>
           </div>
           <button
