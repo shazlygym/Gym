@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaChartBar, FaWhatsapp, FaSpinner } from "react-icons/fa";
+import notificationSound from "../../../tones/notification_sound.mp3";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
 
@@ -96,6 +97,14 @@ const Dashboard = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [modalData.isOpen]);
 
+  // Play notification sound when success modal appears
+  useEffect(() => {
+    if (modalData.isOpen && modalData.type === "success") {
+      const audio = new Audio(notificationSound);
+      audio.play().catch((err) => console.log("Unable to play sound:", err));
+    }
+  }, [modalData.isOpen, modalData.type]);
+
   // 🔹 جلب المستخدمين من الـ backend
   useEffect(() => {
     const fetchUsers = async () => {
@@ -129,6 +138,7 @@ const Dashboard = () => {
     setVisitingId(id);
     try {
       const res = await axios.post(`${apiUrl}/addGymVisit/${id}`);
+      
       setModalData({
         isOpen: true,
         title: "نجاح",
