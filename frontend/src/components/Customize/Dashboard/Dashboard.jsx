@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaChartBar, FaWhatsapp, FaSpinner } from "react-icons/fa";
 import notificationSound from "../../../tones/notification_sound.mp3";
+import errorSound from "../../../tones/message_notification.mp3";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
 
@@ -99,11 +100,16 @@ const Dashboard = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [modalData.isOpen]);
 
-  // Play notification sound when success modal appears
+  // Play notification sound when success or error modal appears
   useEffect(() => {
-    if (modalData.isOpen && modalData.type === "success") {
+    if (!modalData.isOpen) return;
+
+    if (modalData.type === "success") {
       const audio = new Audio(notificationSound);
-      audio.play().catch((err) => console.log("Unable to play sound:", err));
+      audio.play().catch((err) => console.log("Unable to play success sound:", err));
+    } else if (modalData.type === "error") {
+      const audio = new Audio(errorSound);
+      audio.play().catch((err) => console.log("Unable to play error sound:", err));
     }
   }, [modalData.isOpen, modalData.type]);
 
