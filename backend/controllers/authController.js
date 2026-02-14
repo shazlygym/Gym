@@ -123,6 +123,43 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
+// 🔹 فلترة المستخدمين حسب حالة الاشتراك
+exports.getUsersBySubscriptionStatus = async (req, res) => {
+  try {
+    const { status } = req.query; // status: "ساري", "قارب على الانتهاء", "منتهي"
+    const today = new Date();
+    
+    const users = await User.find();
+    
+    let filteredUsers = users;
+    
+    if (status) {
+      filteredUsers = users.filter((user) => {
+        if (!user.renewalDate) return false;
+        
+        const renewalDate = new Date(user.renewalDate);
+        const diffTime = today - renewalDate;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const daysLeft = 30 - diffDays;
+        
+        let userStatus = "ساري";
+        
+        if (diffDays >= 30) {
+          userStatus = "منتهي";
+        } else if (daysLeft <= 5) {
+          userStatus = "قارب على الانتهاء";
+        }
+        
+        return userStatus === status;
+      });
+    }
+    
+    res.json(filteredUsers);
+  } catch (err) {
+    console.error("Error filtering users:", err);
+    res.status(500).json({ message: "Error fetching users" });
+  }
+};
 
  exports.DeleteUser =async (req, res) => {
   try {

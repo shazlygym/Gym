@@ -14,6 +14,7 @@ const Dashboard = () => {
   const usersPerPage = 10; // 🆕 عدد المستخدمين في كل صفحة
   const [visitingId, setVisitingId] = useState(null); // 🆕 حالة التحميل لزر تسجيل الحضور
   const searchInputRef = useRef(null); // 🆕 مرجع حقل البحث
+  const [subscriptionFilter, setSubscriptionFilter] = useState(null); // 🔹 فلتر حالة الاشتراك
 
   // Modal State
   const [modalData, setModalData] = useState({
@@ -110,7 +111,15 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get(`${apiUrl}/getAllUsers`);
+        setLoading(true);
+        let url = `${apiUrl}/getAllUsers`;
+        
+        // 🔹 إذا كان هناك فلتر مختار، استخدم الـ endpoint المخصص
+        if (subscriptionFilter) {
+          url = `${apiUrl}/getUsersBySubscriptionStatus?status=${subscriptionFilter}`;
+        }
+        
+        const res = await axios.get(url);
         setUsers(res.data);
       } catch (err) {
         console.error("خطأ أثناء جلب المستخدمين:", err);
@@ -125,7 +134,7 @@ const Dashboard = () => {
       }
     };
     fetchUsers();
-  }, []);
+  }, [subscriptionFilter]);
 
 
   // 🟢 تسجيل حضور المستخدم
@@ -304,63 +313,124 @@ console.log("days passed:", diffDays);
 
   return (
     <div className="p-4 bg-gray-100 min-h-screen" dir="rtl">
-    <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-      <h1 className="text-3xl font-bold text-gray-600">لوحة التحكم</h1>
-<div className="flex w-full items-center gap-2 rounded-lg border bg-white p-2 shadow-sm sm:w-80">
-          <input
-            ref={searchInputRef}
-            type="text"
-            placeholder="ابحث عن المستخدم .."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="w-full bg-transparent px-2 outline-none"
-          />
-          <button
-            type="button"
-           onClick={() => {
-              setSearch("");
-              setCurrentPage(1);
-            }}
-            disabled={!search}
-            className="rounded-md bg-red px-3 py-1 text-sm font-semibold text-white transition hover:bg-red-600"
-          >
-            حذف
-          </button>
-          <button
-            type="button"
-            disabled={!search}
-            className="rounded-md border px-3 py-1 text-sm font-semibold text-gray-600 transition hover:bg-green hover:text-white hover:border-white disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            بحث
-          </button>
-        </div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-        {}
+      <div className="mb-6">
+        {/* Title */}
+        <h1 className="text-3xl font-bold text-gray-600 mb-4">لوحة التحكم</h1>
         
+        {/* Main Header Row: Left | Center | Right */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+          {/* RIGHT: Subscription Filters */}
+          <div className="flex flex-wrap gap-2 items-center order-1 lg:order-1 justify-end">
+            <span className="text-sm font-semibold text-gray-600">تصفية:</span>
+            <button
+              onClick={() => {
+                setSubscriptionFilter(null);
+                setCurrentPage(1);
+              }}
+              className={`px-3 py-2 rounded-lg font-semibold transition text-xs sm:text-sm ${
+                subscriptionFilter === null
+                  ? "bg-gray-700 text-white shadow-md"
+                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
+              }`}
+            >
+              الكل
+            </button>
+            <button
+              onClick={() => {
+                setSubscriptionFilter("ساري");
+                setCurrentPage(1);
+              }}
+              className={`px-3 py-2 rounded-lg font-semibold transition text-xs sm:text-sm ${
+                subscriptionFilter === "ساري"
+                  ? "bg-green text-white shadow-md"
+                  : "bg-white text-green border border-green hover:bg-green/10"
+              }`}
+            >
+               ساري
+            </button>
+            <button
+              onClick={() => {
+                setSubscriptionFilter("قارب على الانتهاء");
+                setCurrentPage(1);
+              }}
+              className={`px-3 py-2 rounded-lg font-semibold transition text-xs sm:text-sm ${
+                subscriptionFilter === "قارب على الانتهاء"
+                  ? "bg-black text-white shadow-md"
+                  : "bg-white text-black border border-black hover:bg-gray-200"
+              }`}
+            >
+               قارب على الانتهاء
+            </button>
+            <button
+              onClick={() => {
+                setSubscriptionFilter("منتهي");
+                setCurrentPage(1);
+              }}
+              className={`px-3 py-2 rounded-lg font-semibold transition text-xs sm:text-sm ${
+                subscriptionFilter === "منتهي"
+                  ? "bg-red text-white shadow-md"
+                  : "bg-white text-red border border-red hover:bg-red/10"
+              }`}
+            >
+              منتهي
+            </button>
+          </div>
 
-        <div className="flex items-center gap-2">
-          {}
-          <Link
-            to="/Charts"
-            className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-md transition hover:bg-red-50"
-          >
-            <FaChartBar className="text-red text-xl" />
-            <span className="font-semibold">الاحصائيات</span>
-          </Link>
+          {/* CENTER: Search Input */}
+          <div className="flex w-full lg:w-auto items-center gap-2 rounded-lg border bg-white p-2 shadow-sm order-2 lg:order-2 lg:flex-1 lg:mx-4 max-w-md lg:max-w-2xl">
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="ابحث عن المستخدم .."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full bg-transparent px-2 outline-none"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                setSearch("");
+                setCurrentPage(1);
+              }}
+              disabled={!search}
+              className="rounded-md bg-red px-3 py-1 text-sm font-semibold text-white transition hover:bg-red-600"
+            >
+              حذف
+            </button>
+            <button
+              type="button"
+              disabled={!search}
+              className="rounded-md border px-3 py-1 text-sm font-semibold text-gray-600 transition hover:bg-green hover:text-white hover:border-white disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              بحث
+            </button>
+          </div>
 
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-red shadow-md transition hover:bg-red-50"
-          >
-            <FaArrowLeft className="text-red text-lg" />
-            <span className="font-semibold">رجوع</span>
-          </button>
+
+ {/* LEFT: Statistics and Back Buttons */}
+          <div className="flex items-center gap-2 order-3 lg:order-3">
+            <Link
+              to="/Charts"
+              className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-md transition hover:bg-red-50"
+            >
+              <FaChartBar className="text-red text-xl" />
+              <span className="font-semibold">الاحصائيات</span>
+            </Link>
+
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-red shadow-md transition hover:bg-red-50"
+            >
+              <FaArrowLeft className="text-red text-lg" />
+              <span className="font-semibold">رجوع</span>
+            </button>
+          </div>
+         
         </div>
       </div>
-    </div>
 
 <div className="hidden md:block overflow-x-auto bg-white shadow-lg rounded-lg">
       <table className="w-full table-auto border-collapse">

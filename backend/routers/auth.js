@@ -8,14 +8,12 @@ router.post('/Signup', authController.signupUser);
 router.post('/Login',authController.Login)
 router.get('/GetDataProfile/:mobileNumber',authController.GetDataProfile)
 router.get('/getAllUsers',authController.getAllUsers)
+router.get('/getUsersBySubscriptionStatus', authController.getUsersBySubscriptionStatus)
 router.delete('/DeleteUser/:id',authController.DeleteUser)
 router.get('/GetUser/:id',authController.GetUser)
 router.put('/EditUser/:id',authController.EditUser)
 router.get('/checkAuth',authController.checkAuth)
 router.post('/addGymVisit/:id',authController.addGymVisit)
 router.post("/sendEmail/:id", authController.NotiEmail);
-
-
-
 
 module.exports = router;
