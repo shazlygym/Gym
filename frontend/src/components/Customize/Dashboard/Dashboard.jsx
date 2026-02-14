@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaChartBar, FaWhatsapp, FaSpinner } from "react-icons/fa";
@@ -13,6 +13,7 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1); // 🆕 الصفحة الحالية
   const usersPerPage = 10; // 🆕 عدد المستخدمين في كل صفحة
   const [visitingId, setVisitingId] = useState(null); // 🆕 حالة التحميل لزر تسجيل الحضور
+  const searchInputRef = useRef(null); // 🆕 مرجع حقل البحث
 
   // Modal State
   const [modalData, setModalData] = useState({
@@ -115,6 +116,12 @@ const Dashboard = () => {
         console.error("خطأ أثناء جلب المستخدمين:", err);
       } finally {
         setLoading(false);
+        // 🔹 تركيز على حقل البحث بعد التحميل
+        setTimeout(() => {
+          if (searchInputRef.current) {
+            searchInputRef.current.focus();
+          }
+        }, 100);
       }
     };
     fetchUsers();
@@ -150,6 +157,11 @@ const Dashboard = () => {
         u._id === id ? { ...u, usedDays: u.usedDays + 1 } : u
       );
       setUsers(updatedUsers);
+
+      // 🔹 إعادة تحميل الصفحة بعد 1.5 ثانية من النجاح
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (err) {
       console.error(err);
       setModalData({
@@ -184,6 +196,26 @@ const Dashboard = () => {
       u.name.toLowerCase().includes(lowerSearch) ||
       String(u.seq).includes(lowerSearch) // 👈 إضافة البحث بالرقم التسلسلي
     );
+  }).sort((a, b) => {
+    // 🔹 فرز المستخدمين: المنتهي اشتراكهم أولاً
+    const today = new Date();
+    
+    // حساب حالة المستخدم الأول (a)
+    const renewalDateA = a.renewalDate ? new Date(a.renewalDate) : null;
+    const diffTimeA = today - renewalDateA;
+    const diffDaysA = Math.floor(diffTimeA / (1000 * 60 * 60 * 24));
+    const isExpiredA = diffDaysA >= 30;
+    
+    // حساب حالة المستخدم الثاني (b)
+    const renewalDateB = b.renewalDate ? new Date(b.renewalDate) : null;
+    const diffTimeB = today - renewalDateB;
+    const diffDaysB = Math.floor(diffTimeB / (1000 * 60 * 60 * 24));
+    const isExpiredB = diffDaysB >= 30;
+    
+    // وضع المنتهي اشتراكهم أولاً
+    if (isExpiredA && !isExpiredB) return -1;
+    if (!isExpiredA && isExpiredB) return 1;
+    return 0;
   });
   
 
@@ -276,6 +308,7 @@ console.log("days passed:", diffDays);
       <h1 className="text-3xl font-bold text-gray-600">لوحة التحكم</h1>
 <div className="flex w-full items-center gap-2 rounded-lg border bg-white p-2 shadow-sm sm:w-80">
           <input
+            ref={searchInputRef}
             type="text"
             placeholder="ابحث عن المستخدم .."
             value={search}
