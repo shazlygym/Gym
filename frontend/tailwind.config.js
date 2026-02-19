@@ -39,6 +39,8 @@ export default {
       medium: "500",
       semibold: "600",
       bold: "700",
+      extrabold: "800",
+      black: "900",
     },
     colors: {
       transparent: "transparent",
@@ -47,6 +49,8 @@ export default {
       black: "#000000",
       green: "#50C878",
       blue: "#376DB8",
+      purple: "#8b5cf6",
+      amber: "#f59e0b",
       gray: {
         50: "#efefef",
         100: "#dedede",
