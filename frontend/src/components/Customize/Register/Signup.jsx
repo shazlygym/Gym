@@ -1,10 +1,16 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import {
+  FaEye,
+  FaEyeSlash,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaInfoCircle,
+  FaSpinner,
+} from "react-icons/fa";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
-
 
 const videoPackages = [
   {
@@ -17,7 +23,7 @@ const videoPackages = [
       "https://youtube.com/shorts/BiNs8wz4UyE?si=jPMQculhBO5BkoHH",
       "https://youtube.com/shorts/BRsWKIKlysQ?si=hdbzRtjx1185rHBS",
       "https://youtube.com/shorts/6v4nrRVySj0?si=MYoGNdDCP_AFz3Se",
-      "https://youtube.com/shorts/4yTQjZvp3Nk?si=WMtAiGW534D6kpMO"
+      "https://youtube.com/shorts/4yTQjZvp3Nk?si=WMtAiGW534D6kpMO",
     ],
   },
   {
@@ -29,8 +35,7 @@ const videoPackages = [
       "https://youtube.com/shorts/AvRH0zEzFqo?si=Ptwv3o9ioj10reyF",
       "https://youtu.be/AweC3UaM14o?si=481htBKquwRJgO1p",
       "https://youtube.com/shorts/NRFz01Fhwtw?si=W02RLpQGU6uauJUc",
-      "https://youtube.com/shorts/d5YiFNoiCa0?si=7J9Bl_iIOO71hB5F"
-   
+      "https://youtube.com/shorts/d5YiFNoiCa0?si=7J9Bl_iIOO71hB5F",
     ],
   },
   {
@@ -45,8 +50,7 @@ const videoPackages = [
       "https://youtu.be/OuG1smZTsQQ?si=W6pjRFjWhXvRx90h",
       "https://youtube.com/shorts/NG-tstEu6bg?si=4opV3SbAxPy5qXlR",
       "https://youtube.com/shorts/oZ1MbUl-_-w?si=Gx6wF3KMYUgjCsIa",
-      "https://youtube.com/shorts/ayaK3qYn9ZQ?si=SZI8ztYkGIRIBzHl"
-    
+      "https://youtube.com/shorts/ayaK3qYn9ZQ?si=SZI8ztYkGIRIBzHl",
     ],
   },
   {
@@ -59,8 +63,7 @@ const videoPackages = [
       "https://youtube.com/shorts/86AQ-tEpYKQ?si=EgHZCugpbRXNuscU",
       "https://youtube.com/shorts/gdXIIVY8wIY?si=4n7uJMIK-ia8YSO9",
       "https://youtube.com/shorts/haHcBAd637E?si=vsGKH5YWzjrT3qcy",
-      "https://youtube.com/shorts/dkGwcfo9zto?si=yTUdBI5BvsnldpP8"
-    
+      "https://youtube.com/shorts/dkGwcfo9zto?si=yTUdBI5BvsnldpP8",
     ],
   },
   {
@@ -72,8 +75,7 @@ const videoPackages = [
       "https://youtube.com/shorts/06xdMa4rsgU?si=UnvNT2ODwbPR4W-Y",
       "https://youtube.com/shorts/pjIrjwBjvu4?si=wpFxEZtSjzhZ3gsp",
       "https://youtube.com/shorts/bwM7IhfVOzM?si=Po3lndF1QUrRcbsr",
-      "https://youtube.com/shorts/TgUfw7liSAo?si=4061IHotY_GL22Fp"
-    
+      "https://youtube.com/shorts/TgUfw7liSAo?si=4061IHotY_GL22Fp",
     ],
   },
   {
@@ -85,185 +87,150 @@ const videoPackages = [
       "https://youtube.com/shorts/lMJUXEvcMkQ?si=-yEipOvKzQe-kUop",
       "https://youtube.com/shorts/k6tzKisR3NY?si=cleNxmKlj5oP6Vip",
       "https://youtube.com/shorts/w5a5sErWIEw?si=38U6tn-JB9yBD2g6",
-      "https://youtube.com/shorts/Q89qOqfvhrY?si=BKY0v7E9k2v31AGU"
-    
+      "https://youtube.com/shorts/Q89qOqfvhrY?si=BKY0v7E9k2v31AGU",
     ],
   },
   {
     id: 7,
     name: "Pull 1",
     videos: [
-      // 1- lat pulldown
       "https://youtube.com/shorts/5s6KGLTMgoI?si=HT-jKJbinK-M8X2F",
-  
-      // 2- wide grip seated row
       "https://youtube.com/shorts/Xx5qJpzEtxw?si=vUDNobmRQAFGHNdc",
-  
-      // 3- t bar row
       "https://youtube.com/shorts/wE-3hvJS6to?si=M5Y4I2lXczIX6Gle",
-  
-      // 4- single arm lat row
       "https://youtube.com/shorts/Xc40ltTx1N8?si=7ROgG_b0zKIS_ZR9",
-  
-      // 5- shrugs
       "https://youtube.com/shorts/t6QJTiz35dc?si=TmwL4jF4Vpp4eoQ8",
-  
-      // 6- rear delt cable
       "https://youtube.com/shorts/FeERX9UwspY?si=MoN3e88lEwxuAxno",
-  
-      // 7- biceps face away
       "https://youtube.com/shorts/uKFclgM1lrs?si=hFWGy_U8ZZU-pgyw",
-  
-      // 8- incline dumbbell curl
-      "https://youtube.com/shorts/fXFN8_1Bh6k?si=kDTzaWTdp6ro4U51"
+      "https://youtube.com/shorts/fXFN8_1Bh6k?si=kDTzaWTdp6ro4U51",
     ],
   },
   {
     id: 8,
     name: "Pull 2",
     videos: [
-      // 1- close grip lat pulldown
       "https://youtube.com/shorts/uy0YkGtY7A8?si=JJ-OwXXKts9X7OuW",
-  
-      // 3- t bar row
       "https://youtube.com/shorts/wE-3hvJS6to?si=M5Y4I2lXczIX6Gle",
-  
-      // 4- single arm lat pulldown
       "https://youtube.com/shorts/0RvXo3Pj5DA?si=I9yLu1H6s8wn926Z",
-  
-      // 5- shrugs
       "https://youtube.com/shorts/FCsKgCxlcHQ?si=TmxluVOQkCL3pOYP",
-  
-      // 6- rear flay machine
       "https://youtube.com/shorts/2A8Gtxnl4dI?si=aUemgkiWPVnqbW7b",
-  
-      // 7- biceps curl
       "https://youtube.com/shorts/KEX6AwDtslM?si=TRW8UoPSSy8MFcVg",
-  
-      // 8- dumbbell curl
-      "https://youtube.com/shorts/TOngwsi_S9w?si=0a8fLrHwwBzlBlDN"
+      "https://youtube.com/shorts/TOngwsi_S9w?si=0a8fLrHwwBzlBlDN",
     ],
   },
   {
     id: 9,
     name: "Legs 1",
     videos: [
-      // 1- squat
       "https://youtu.be/-eO_VydErV0?si=BjHOhb1Jx9TU5tEo",
-  
-      // 2- leg extension
       "https://youtu.be/m0FOpMEgero?si=nLeYp1bPZHDl1nx8",
-  
-      // 3- lunges
       "https://youtube.com/shorts/LbxZYQVgxI4?si=jkCiVxwlZIdP2mkN",
-  
-      // 4- hamstring
       "https://youtube.com/shorts/86AQ-tEpYKQ?si=EgHZCugpbRXNuscU",
-  
-      // 5- adductors
       "https://youtube.com/shorts/gdXIIVY8wIY?si=4n7uJMIK-ia8YSO9",
-  
-      // 6- calf
       "https://youtube.com/shorts/haHcBAd637E?si=vsGKH5YWzjrT3qcy",
-  
-      // 7- cable crunch
-      "https://youtube.com/shorts/dkGwcfo9zto?si=yTUdBI5BvsnldpP8"
+      "https://youtube.com/shorts/dkGwcfo9zto?si=yTUdBI5BvsnldpP8",
     ],
   },
   {
     id: 10,
     name: "Legs 2",
     videos: [
-      // 1- leg press
       "https://youtube.com/shorts/pCLf-OeSMtQ?si=J0mrutqk3svN1tHa",
-  
-      // 2- leg extension
       "https://youtube.com/shorts/iQ92TuvBqRo?si=S-V_wwLEdWnGkhCF",
-  
-      // 3- lunges
       "https://youtube.com/shorts/OrR2PgzH5W0?si=cKnSIud1iyFNRfRr",
-  
-      // 4- hamstring
       "https://youtube.com/shorts/ANKSmhT0dTk?si=HAj3MP4NYjkwjAKr",
-  
-      // 5- calf
-      "https://youtube.com/shorts/4_QkvpYfxes?si=mdF9JPL_DF-TmsB5"
+      "https://youtube.com/shorts/4_QkvpYfxes?si=mdF9JPL_DF-TmsB5",
     ],
   },
-
   {
     id: 11,
     name: "Full Body 1",
     videos: [
-      // 1- dumbbell incline
       "https://youtu.be/5CECBjd7HLQ?si=_VRp8sYAuIe_VoB1",
-  
-      // 2- fly machine
       "https://youtu.be/FDay9wFe5uE?si=_0kZ1AWSYVoatxv1",
-  
-      // 3- chest supported row
       "https://youtu.be/tZUYS7X50so?si=h0aeESOGmnRt_rMl",
-  
-      // 4- single arm lat row
       "https://youtube.com/shorts/5s6KGLTMgoI?si=-ijZXfILZBVPk_lz",
-  
-      // 5- lateral raises
       "https://youtube.com/shorts/lMJUXEvcMkQ?si=ICbsnlv_6p0D909s",
-  
-      // 6- tricep push down
       "https://youtube.com/shorts/vLJZZXB6cms?si=Qrtd4Oxbxbi3kVgC",
-  
-      // 7- preacher curl machine
       "https://youtube.com/shorts/0y4tdUNPdlE?si=yZsJYdqjgIZtV8_k",
-  
-      // 8- leg extension
       "https://youtube.com/shorts/iQ92TuvBqRo?si=vE4seHrZ0QeEeC2e",
-  
-      // 9- hamstring
-      "https://youtube.com/shorts/lGNeJsdqJwg?si=BKekNoBAoxG5uQ7d"
+      "https://youtube.com/shorts/lGNeJsdqJwg?si=BKekNoBAoxG5uQ7d",
     ],
   },
-
   {
     id: 12,
     name: "Full Body 2",
     videos: [
-      // 1- dumbbell incline
       "https://youtu.be/5CECBjd7HLQ?si=_VRp8sYAuIe_VoB1",
-  
-      // 2- cable chest press
       "https://youtu.be/A3RepyBbWVI?feature=shared",
-  
-      // 3- chest supported row
       "https://youtu.be/tZUYS7X50so?si=h0aeESOGmnRt_rMl",
-  
-      // 4- single arm lat row
       "https://youtube.com/shorts/5s6KGLTMgoI?si=-ijZXfILZBVPk_lz",
-  
-      // 5- lateral raises
       "https://youtube.com/shorts/lMJUXEvcMkQ?si=ICbsnlv_6p0D909s",
-  
-      // 6- tricep push down
       "https://youtube.com/shorts/vLJZZXB6cms?si=Qrtd4Oxbxbi3kVgC",
-  
-      // 7- preacher curl machine
       "https://youtube.com/shorts/0y4tdUNPdlE?si=yZsJYdqjgIZtV8_k",
-  
-      // 8- leg press
       "https://youtube.com/shorts/30Pts0lXzuk?si=I-JLBsS6SxGJQA_L",
-  
-      // 9- ham dumbbell
-      "https://youtube.com/shorts/86AQ-tEpYKQ?si=4ZLSNGYKKPoEi0rL"
+      "https://youtube.com/shorts/86AQ-tEpYKQ?si=4ZLSNGYKKPoEi0rL",
     ],
   },
-  
-  
-
-  
-    
-  
 ];
 
+/* ──────────────────────────────────────────
+   Modal
+────────────────────────────────────────── */
+function Modal({ isOpen, type, title, message, onClose }) {
+  if (!isOpen) return null;
+
+  const cfg = {
+    success: { icon: <FaCheckCircle className="text-4xl text-green" />, btnCls: "bg-green hover:bg-green text-white" },
+    error:   { icon: <FaTimesCircle  className="text-4xl text-red"   />, btnCls: "bg-red   hover:bg-red   text-white" },
+    info:    { icon: <FaInfoCircle   className="text-4xl text-blue"  />, btnCls: "bg-blue  hover:bg-blue  text-white" },
+  };
+  const { icon, btnCls } = cfg[type] || cfg.info;
+
+  return (
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-2xl w-11/12 max-w-sm p-6 text-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-center mb-3">{icon}</div>
+        <h3 className="text-xl font-bold text-gray-600 mb-2">{title}</h3>
+        <p className="text-gray-400 text-sm mb-5 leading-relaxed">{message}</p>
+        <button
+          onClick={onClose}
+          className={`${btnCls} px-8 py-2 rounded-lg font-semibold transition`}
+        >
+          حسناً
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────
+   Reusable field wrapper
+────────────────────────────────────────── */
+function Field({ label, children }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-sm font-semibold text-gray-400 text-right">{label}</label>
+      {children}
+    </div>
+  );
+}
+
+/* shared input className */
+const inputCls =
+  "w-full rounded-lg border border-gray-100 bg-white px-3 py-2.5 text-right text-gray-600 text-sm placeholder-gray-200 outline-none focus:ring-2 focus:ring-red focus:border-transparent transition";
+
+const selectCls =
+  "w-full rounded-lg border border-gray-100 bg-white px-3 py-2.5 text-right text-gray-600 text-sm outline-none focus:ring-2 focus:ring-red focus:border-transparent transition";
+
+/* ──────────────────────────────────────────
+   Signup Page
+────────────────────────────────────────── */
 export default function Signup() {
   const [formData, setFormData] = useState({
     name: "",
@@ -272,231 +239,236 @@ export default function Signup() {
     mobileNumber: "",
     seq: "",
     videosName: "",
-    packageName:"",
-    packagePrice:"",
-    videos: []          // ✅ مهم
+    packageName: "",
+    packagePrice: "",
+    videos: [],
   });
-  
-    const [member, setMember] = useState({});
-
   const [selectedPackageId, setSelectedPackageId] = useState(null);
+  const [showPassword, setShowPassword]           = useState(false);
+  const [isLoading, setIsLoading]                 = useState(false);
+  const [modal, setModal] = useState({ isOpen: false, type: "info", title: "", message: "" });
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const showModal  = (type, title, message) => setModal({ isOpen: true, type, title, message });
+  const closeModal = () => setModal((m) => ({ ...m, isOpen: false }));
+
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
   const handleSubmit = async () => {
+    setIsLoading(true);
     try {
-      const res = await axios.post(
-        `${apiUrl}/Signup`,
-        formData,
-        { withCredentials: true }
-      );
-  
-      alert("تم إنشاء الحساب بنجاح!");
-      navigate("/Dashboard");
+      await axios.post(`${apiUrl}/Signup`, formData, { withCredentials: true });
+      showModal("success", "تم بنجاح! ✅", "تم إنشاء الحساب بنجاح.");
+      setTimeout(() => navigate("/Dashboard"), 1800);
     } catch (err) {
       console.error(err);
-      alert("حدث خطأ أثناء إنشاء الحساب");
+      showModal("error", "حدث خطأ ❌", err?.response?.data?.message || "حدث خطأ أثناء إنشاء الحساب.");
+    } finally {
+      setIsLoading(false);
     }
   };
-  
-  
+
   const handleAddPackage = () => {
     if (!selectedPackageId) {
-      alert("اختر الباقة أولاً");
+      showModal("info", "تنبيه", "يرجى اختيار باقة الفيديوهات أولاً.");
       return;
     }
-  
-    const pkg = videoPackages.find(p => p.id === selectedPackageId);
+    const pkg = videoPackages.find((p) => p.id === selectedPackageId);
     if (!pkg) return;
-  
-    const updatedVideos = Array.from(
-      new Set([...(formData.videos || []), ...pkg.videos])
-    );
-  
-    setFormData({
-      ...formData,
-      videos: updatedVideos,
-      videosName: pkg.name   // ✅ تخزين اسم آخر باقة
-    });
-  
-    alert(`تم إضافة باقة الفيديوهات: ${pkg.name}`);
+    const updatedVideos = Array.from(new Set([...(formData.videos || []), ...pkg.videos]));
+    setFormData({ ...formData, videos: updatedVideos, videosName: pkg.name });
+    showModal("success", "تمت الإضافة ✅", `تم إضافة باقة: ${pkg.name} (${pkg.videos.length} فيديو)`);
   };
-  
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <h3 className="text-2xl font-semibold mb-6 text-center text-red">إنشاء حساب</h3>
+    <>
+      <Modal {...modal} onClose={closeModal} />
 
-        <div  className="space-y-4">
-        <div>
-            <label className="block text-sm font-medium">الاسم الكامل</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
-              placeholder="أدخل اسمك الكامل"
-              required
-            />
+      <div dir="rtl" className="min-h-screen bg-gray-50 flex items-start justify-center py-8 px-4">
+        <div className="w-full max-w-3xl bg-white rounded-2xl shadow-lg overflow-hidden">
+
+          {/* ── Header strip ── */}
+          <div className="bg-red px-8 py-5 flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-white">إنشاء حساب</h1>
+            <p className="text-sm text-white opacity-80">أضف عضوًا جديدًا في الجيم</p>
           </div>
 
-        <div>
-            <label className="block text-sm font-medium">الرقم التعريفي</label>
-            <input
-              type="number"
-              name="seq"
-              value={formData.seq}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
-              placeholder="أدخل الرقم التعريفي"
-              required
-            />
-          </div>
+          {/* ── Form body ── */}
+          <div className="p-8">
 
+            {/* Row 1: الاسم + الرقم التعريفي */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <Field label="الاسم الكامل">
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="أدخل الاسم الكامل"
+                  className={inputCls}
+                />
+              </Field>
+              <Field label="الرقم التعريفي">
+                <input
+                  type="number"
+                  name="seq"
+                  value={formData.seq}
+                  onChange={handleChange}
+                  placeholder="أدخل الرقم التعريفي"
+                  className={inputCls}
+                />
+              </Field>
+            </div>
 
-          <div>
-  <label className="block text-sm font-medium">اسم الباقة</label>
-  <select
-    name="packageName"
-    value={formData.packageName}
-    onChange={handleChange}
-    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
-    required
-  >
-    <option value="" disabled>
-      اختر اسم الباقة
-    </option>
-    <option value="الاولى">الاولى</option>
-    <option value="الثانية ">الثانية </option>
-    <option value="الثالثة">الثالثة </option>
-  </select>
-</div>
+            {/* Row 2: اسم الباقة + قيمة الباقة */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <Field label="اسم الباقة">
+                <select
+                  name="packageName"
+                  value={formData.packageName}
+                  onChange={handleChange}
+                  className={selectCls}
+                >
+                  <option value="" disabled>اختر اسم الباقة</option>
+                  <option value="الاولى">الأولى</option>
+                  <option value="الثانية ">الثانية</option>
+                  <option value="الثالثة">الثالثة</option>
+                </select>
+              </Field>
+              <Field label="قيمة الباقة">
+                <input
+                  type="number"
+                  name="packagePrice"
+                  value={formData.packagePrice}
+                  onChange={handleChange}
+                  placeholder="أدخل قيمة الباقة"
+                  className={inputCls}
+                />
+              </Field>
+            </div>
 
+            {/* Divider */}
+            <div className="border-t border-gray-50 my-5" />
 
+            {/* باقة الفيديوهات */}
+            <div className="mb-4">
+              <p className="text-sm font-bold text-gray-600 mb-2">اختر باقة فيديوهات</p>
+              <div className="flex gap-3">
+                <select
+                  value={selectedPackageId || ""}
+                  onChange={(e) => setSelectedPackageId(Number(e.target.value))}
+                  className={selectCls + " flex-1"}
+                >
+                  <option value="">-- اختر باقة --</option>
+                  {videoPackages.map((pkg) => (
+                    <option key={pkg.id} value={pkg.id}>
+                      {pkg.name} ({pkg.videos.length} فيديو)
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={handleAddPackage}
+                  className="flex-shrink-0 bg-blue hover:bg-blue text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition hover:opacity-90"
+                >
+                  إضافة الباقة
+                </button>
+              </div>
+              {formData.videosName && (
+                <p className="text-xs text-green font-semibold mt-1.5">
+                  ✅ تم إضافة: {formData.videosName} — {formData.videos.length} فيديو
+                </p>
+              )}
+            </div>
 
-<div>
-            <label className="block text-sm font-medium"> قيمة الباقة</label>
-            <input
-              type="number"
-              name="packagePrice"
-              value={formData.packagePrice}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
-              placeholder="أدخل  قيمة الباقة"
-              required
-            />
-          </div>
+            {/* Divider */}
+            <div className="border-t border-gray-50 my-5" />
 
+            {/* Row 3: الأيام + رقم الهاتف */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <Field label="الأيام المسجلة">
+                <input
+                  type="number"
+                  name="totalDays"
+                  onChange={handleChange}
+                  placeholder="مثال: 26"
+                  className={inputCls}
+                />
+              </Field>
+              <Field label="رقم الهاتف">
+                <input
+                  type="text"
+                  name="mobileNumber"
+                  value={formData.mobileNumber}
+                  onChange={handleChange}
+                  placeholder="010xxxxxxxx"
+                  className={inputCls}
+                />
+              </Field>
+            </div>
 
+            {/* Row 4: كلمة المرور + البريد */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <Field label="كلمة المرور">
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="********"
+                    className={inputCls + " pl-10"}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-200 hover:text-red transition"
+                    title={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
+                  >
+                    {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                  </button>
+                </div>
+              </Field>
+              <Field label="البريد الإلكتروني (اختياري)">
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="name@example.com"
+                  className={inputCls}
+                />
+              </Field>
+            </div>
 
-             {/* اختيار باقة الفيديوهات */}
-             <div className="my-4">
-            <h3 className="text-lg font-semibold mb-2">اختر باقة فيديوهات</h3>
-          
-
-            <select
-              value={selectedPackageId || ""}
-              onChange={(e) => setSelectedPackageId(Number(e.target.value))}
-              className="border rounded-xl px-3 py-2 mb-2 w-full"
-            >
-              <option value="">-- اختر باقة --</option>
-              {videoPackages.map((pkg) => (
-                <option key={pkg.id} value={pkg.id}>
-                  {pkg.name} ({pkg.videos.length} فيديو)
-                </option>
-              ))}
-            </select>
+            {/* Submit Button */}
             <button
               type="button"
-              onClick={handleAddPackage}
-              className="bg-blue text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition"
+              onClick={handleSubmit}
+              disabled={isLoading}
+              className="w-full py-3 rounded-lg bg-red hover:bg-red text-white font-bold text-base transition hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red"
             >
-              إضافة الباقة
+              {isLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <FaSpinner className="animate-spin" />
+                  جارٍ الإنشاء...
+                </span>
+              ) : (
+                "تسجيل"
+              )}
             </button>
+
+            {/* Login Link */}
+            <p className="mt-4 text-center text-sm text-gray-300">
+              لديك حساب بالفعل؟{" "}
+              <Link to="/Login" className="text-red font-semibold underline underline-offset-2 hover:opacity-80 transition">
+                سجّل الدخول
+              </Link>
+            </p>
           </div>
-
-
-             {/* عدد الأيام المسجلة */}
-                    <div className="flex items-center border rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-red-500 transition">
-                    
-                      <input
-                        type="number"
-                        name="totalDays"
-                        onChange={handleChange}
-                        placeholder="الايام المسجلة"
-                        className="w-full bg-transparent outline-none text-gray-700"
-                      />
-                    </div>
-
-
-          <div>
-            <label className="block text-sm font-medium">رقم الهاتف </label>
-            <input
-              type="text"
-              name="mobileNumber"
-              value={formData.mobileNumber}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
-              placeholder="010xxxxxxxx"
-              required
-            />
-          </div>
-
-
-          <div>
-            <label className="block text-sm font-medium">كلمة المرور</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
-              placeholder="********"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">البريد الإلكتروني(اختياري)</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red"
-              placeholder="name@example.com"
-              
-            />
-          </div>
-
-        
-
-        
-          
-       
-
-          <button
-           onClick={()=>handleSubmit()}
-            className="w-full py-2 rounded-md text-white font-semibold bg-red hover:bg-red focus:outline-none focus:ring-2 focus:ring-red"
-          >
-            تسجيل
-          </button>
-        </div>
-
-        <div className="mt-4 text-center text-sm text-gray-500">
-          لديك حساب؟{" "}
-          <Link to={"/Login"} className="text-red font-medium underline">
-            سجل الدخول
-          </Link>
         </div>
       </div>
-    </div>
+    </>
   );
 }
