@@ -155,7 +155,7 @@ const Dashboard = () => {
     setVisitingId(id);
     try {
       const res = await axios.post(`${apiUrl}/addGymVisit/${id}`);
-      
+
       setModalData({
         isOpen: true,
         title: "نجاح",
@@ -244,25 +244,25 @@ const Dashboard = () => {
     .sort((a, b) => {
       // 🔹 فرز المستخدمين: المنتهي اشتراكهم أولاً
       const today = new Date();
-      
+
       // حساب حالة المستخدم الأول (a)
       const renewalDateA = a.renewalDate ? new Date(a.renewalDate) : null;
       const diffTimeA = today - renewalDateA;
       const diffDaysA = Math.floor(diffTimeA / (1000 * 60 * 60 * 24));
       const isExpiredA = diffDaysA >= 30;
-      
+
       // حساب حالة المستخدم الثاني (b)
       const renewalDateB = b.renewalDate ? new Date(b.renewalDate) : null;
       const diffTimeB = today - renewalDateB;
       const diffDaysB = Math.floor(diffTimeB / (1000 * 60 * 60 * 24));
       const isExpiredB = diffDaysB >= 30;
-      
+
       // وضع المنتهي اشتراكهم أولاً
       if (isExpiredA && !isExpiredB) return -1;
       if (!isExpiredA && isExpiredB) return 1;
       return 0;
     });
-  
+
 
   // 🧮 حساب المستخدمين المعروضين حسب الصفحة الحالية
   const indexOfLastUser = currentPage * usersPerPage;
@@ -282,51 +282,79 @@ const Dashboard = () => {
       </div>
     );
 
-    const handleSendEmail = async (id) => {
-      try {
-  
-        // ✅ إرسال الطلب إلى السيرفر باستخدام الـ userId فقط
-        const response = await axios.post(`${apiUrl}/sendEmail/${id}`);
-  
-        setModalData({
-          isOpen: true,
-          title: "نجاح",
-          message: response.data.message || "تم إرسال التذكير بنجاح ✅",
-          type: "success",
-        });
-      } catch (error) {
-        console.error("❌ خطأ أثناء إرسال البريد:", error);
-        setModalData({
-          isOpen: true,
-          title: "خطأ",
-          message: error.response?.data?.message || "حدث خطأ أثناء إرسال البريد الإلكتروني",
-          type: "error",
-        });
-      } 
-    };
+  const handleSendEmail = async (id) => {
+    try {
 
+      // ✅ إرسال الطلب إلى السيرفر باستخدام الـ userId فقط
+      const response = await axios.post(`${apiUrl}/sendEmail/${id}`);
 
-    function timeAgo(dateString) {
-      const now = new Date();
-      const past = new Date(dateString);
-    
-      const diffInMs = now - past;
-      const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-    
-      if (diffInDays < 1) return "اليوم";
-      if (diffInDays < 30) return `منذ ${diffInDays} يوم`;
-    
-      const months = Math.floor(diffInDays / 30);
-      if (months < 12) return `منذ ${months} شهر`;
-    
-      const years = Math.floor(months / 12);
-      return `منذ ${years} سنة`;
+      setModalData({
+        isOpen: true,
+        title: "نجاح",
+        message: response.data.message || "تم إرسال التذكير بنجاح ✅",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("❌ خطأ أثناء إرسال البريد:", error);
+      setModalData({
+        isOpen: true,
+        title: "خطأ",
+        message: error.response?.data?.message || "حدث خطأ أثناء إرسال البريد الإلكتروني",
+        type: "error",
+      });
     }
+  };
+
+
+  function timeAgo(dateString) {
+    const now = new Date();
+    const past = new Date(dateString);
+
+    const diffInMs = now - past;
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInDays < 1) return "اليوم";
+    if (diffInDays < 30) return `منذ ${diffInDays} يوم`;
+
+    const months = Math.floor(diffInDays / 30);
+    if (months < 12) return `منذ ${months} شهر`;
+
+    const years = Math.floor(months / 12);
+    return `منذ ${years} سنة`;
+  }
 
 
   return (
-    <div className="relative p-4 bg-gray-100 min-h-screen overflow-hidden" dir="rtl">
-      <div className="pointer-events-none absolute inset-x-0 -top-4 z-20 flex justify-between px-4 sm:px-10">
+    <>
+      {/* ✨ حبال النور المائلة - fixed فوق كل شيء */}
+      <div className="pointer-events-none fixed right-0 top-0 z-[9999] origin-top-right rotate-12">
+        <div className="h-1.5 w-56 sm:w-80 md:w-[26rem] bg-gradient-to-l from-[#FACC6B] via-[#FDE68A] to-[#FACC6B] shadow-[0_0_20px_rgba(250,204,107,1)] rounded-full" />
+        <div className="mt-1.5 flex justify-between px-2">
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FACC6B] shadow-[0_0_12px_rgba(250,204,107,1)]" />
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FDE68A] shadow-[0_0_12px_rgba(253,230,138,1)]" />
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FACC6B] shadow-[0_0_12px_rgba(250,204,107,1)]" />
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FDE68A] shadow-[0_0_12px_rgba(253,230,138,1)]" />
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FACC6B] shadow-[0_0_12px_rgba(250,204,107,1)]" />
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FDE68A] shadow-[0_0_12px_rgba(253,230,138,1)]" />
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FACC6B] shadow-[0_0_12px_rgba(250,204,107,1)]" />
+        </div>
+      </div>
+
+      <div className="pointer-events-none fixed left-0 top-0 z-[9999] origin-top-left -rotate-12">
+        <div className="h-1.5 w-56 sm:w-80 md:w-[26rem] bg-gradient-to-r from-[#FACC6B] via-[#FDE68A] to-[#FACC6B] shadow-[0_0_20px_rgba(250,204,107,1)] rounded-full" />
+        <div className="mt-1.5 flex justify-between px-2">
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FACC6B] shadow-[0_0_12px_rgba(250,204,107,1)]" />
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FDE68A] shadow-[0_0_12px_rgba(253,230,138,1)]" />
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FACC6B] shadow-[0_0_12px_rgba(250,204,107,1)]" />
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FDE68A] shadow-[0_0_12px_rgba(253,230,138,1)]" />
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FACC6B] shadow-[0_0_12px_rgba(250,204,107,1)]" />
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FDE68A] shadow-[0_0_12px_rgba(253,230,138,1)]" />
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FACC6B] shadow-[0_0_12px_rgba(250,204,107,1)]" />
+        </div>
+      </div>
+
+      {/* ✨ الفوانيس المعلقة - fixed فوق كل شيء */}
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-[9998] flex justify-between px-4 sm:px-10">
         <div className="flex items-start gap-5 sm:gap-8">
           <div className="flex flex-col items-center gap-2">
             <div className="w-px h-20 sm:h-24 bg-[#FACC6B]" />
@@ -358,533 +386,572 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="pointer-events-none absolute right-0 top-0 z-10 origin-top-right rotate-12">
-        <div className="h-1 w-56 sm:w-80 md:w-96 bg-gradient-to-l from-[#FACC6B] via-[#FDE68A] to-[#FACC6B] shadow-[0_0_16px_rgba(250,204,107,0.9)] rounded-full" />
-        <div className="mt-1 flex justify-between px-2">
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FACC6B] shadow-[0_0_10px_rgba(250,204,107,0.9)]" />
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FDE68A] shadow-[0_0_10px_rgba(253,230,138,0.9)]" />
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FACC6B] shadow-[0_0_10px_rgba(250,204,107,0.9)]" />
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FDE68A] shadow-[0_0_10px_rgba(253,230,138,0.9)]" />
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FACC6B] shadow-[0_0_10px_rgba(250,204,107,0.9)]" />
-        </div>
-      </div>
+      <div className="relative p-4 bg-gray-100 min-h-screen overflow-hidden" dir="rtl">
 
-      <div className="pointer-events-none absolute left-0 top-0 z-10 origin-top-left -rotate-12">
-        <div className="h-1 w-56 sm:w-80 md:w-96 bg-gradient-to-r from-[#FACC6B] via-[#FDE68A] to-[#FACC6B] shadow-[0_0_16px_rgba(250,204,107,0.9)] rounded-full" />
-        <div className="mt-1 flex justify-between px-2">
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FACC6B] shadow-[0_0_10px_rgba(250,204,107,0.9)]" />
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FDE68A] shadow-[0_0_10px_rgba(253,230,138,0.9)]" />
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FACC6B] shadow-[0_0_10px_rgba(250,204,107,0.9)]" />
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FDE68A] shadow-[0_0_10px_rgba(253,230,138,0.9)]" />
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FACC6B] shadow-[0_0_10px_rgba(250,204,107,0.9)]" />
-        </div>
-      </div>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-600 mb-4">لوحة التحكم</h1>
+          {showRamadanBanner && (
+            <div
+              className="mb-4 rounded-2xl text-white shadow-2xl overflow-hidden"
+              style={{
+                background: "linear-gradient(135deg, #1a0000 0%, #5c0000 25%, #8b0000 50%, #5c0000 75%, #1a0000 100%)",
+                boxShadow: "0 8px 32px rgba(139,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)",
+                border: "1px solid rgba(220,38,38,0.3)"
+              }}
+            >
+              {/* شريط زخرفي علوي */}
+              <div
+                style={{
+                  height: "3px",
+                  background: "linear-gradient(90deg, transparent, #FACC6B, #FDE68A, #FACC6B, transparent)",
+                  boxShadow: "0 0 10px rgba(250,204,107,0.8)"
+                }}
+              />
 
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-600 mb-4">لوحة التحكم</h1>
-        {showRamadanBanner && (
-          <div className="mb-4 rounded-2xl bg-gradient-to-l from-red to-black text-white px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
-            <div>
-              <p className="text-xl font-semibold">رمضان كريم</p>
-              <p className="text-sm text-red-100">
-                نتمنى لك شهرا مليئا بالصحة والإنجاز والالتزام في الجيم.
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-3 text-3xl sm:text-4xl">
-                <FaMoon className="text-[#FDE68A] drop-shadow-[0_0_10px_rgba(253,230,138,0.9)]" />
-                <FaStar className="text-[#FEF3C7] drop-shadow-[0_0_10px_rgba(254,243,199,0.9)]" />
-                <GiLantern className="text-[#FACC6B] drop-shadow-[0_0_10px_rgba(250,204,107,0.9)]" />
+              <div className="px-5 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                {/* النص الرئيسي */}
+                <div className="flex flex-col gap-1 text-right">
+                  <div className="flex items-center gap-2">
+                    <FaStarAndCrescent
+                      className="text-2xl"
+                      style={{ color: "#FACC6B", filter: "drop-shadow(0 0 8px rgba(250,204,107,0.9))" }}
+                    />
+                    <span
+                      className="text-2xl sm:text-3xl font-extrabold tracking-wide"
+                      style={{
+                        background: "linear-gradient(90deg, #FDE68A, #FACC6B, #FEF3C7, #FACC6B, #FDE68A)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                        textShadow: "none"
+                      }}
+                    >
+                      رمضان كريم 🌙
+                    </span>
+                  </div>
+                  <p
+                    className="text-sm sm:text-base"
+                    style={{ color: "rgba(253,230,138,0.85)", textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}
+                  >
+                    نتمنى لك شهراً مليئاً بالصحة والإنجاز والالتزام في الجيم 💪
+                  </p>
+                </div>
+
+                {/* الأيقونات وزر الإخفاء */}
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
+                    <GiLantern
+                      className="text-4xl sm:text-5xl animate-float1"
+                      style={{ color: "#FACC6B", filter: "drop-shadow(0 0 14px rgba(250,204,107,1))" }}
+                    />
+                    <FaMoon
+                      className="text-3xl sm:text-4xl animate-float2"
+                      style={{ color: "#FDE68A", filter: "drop-shadow(0 0 12px rgba(253,230,138,1))" }}
+                    />
+                    <FaStar
+                      className="text-2xl sm:text-3xl animate-float1"
+                      style={{ color: "#FEF3C7", filter: "drop-shadow(0 0 10px rgba(254,243,199,1))" }}
+                    />
+                    <GiLantern
+                      className="text-4xl sm:text-5xl animate-float2"
+                      style={{ color: "#FACC6B", filter: "drop-shadow(0 0 14px rgba(250,204,107,1))" }}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowRamadanBanner(false)}
+                    className="text-xs sm:text-sm px-4 py-1.5 rounded-full font-semibold transition-all hover:scale-105"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(220,38,38,0.3), rgba(0,0,0,0.4))",
+                      border: "1px solid rgba(250,204,107,0.5)",
+                      color: "#FDE68A",
+                    }}
+                  >
+                    إخفاء ✕
+                  </button>
+                </div>
               </div>
+
+              {/* شريط زخرفي سفلي */}
+              <div
+                style={{
+                  height: "3px",
+                  background: "linear-gradient(90deg, transparent, #cc0000, #8b0000, #cc0000, transparent)",
+                  boxShadow: "0 0 10px rgba(139,0,0,0.6)"
+                }}
+              />
+            </div>
+          )}
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+            <div className="flex flex-wrap gap-2 items-center order-1 lg:order-1 justify-end">
+              <span className="text-sm font-semibold text-gray-600">تصفية:</span>
               <button
-                type="button"
-                onClick={() => setShowRamadanBanner(false)}
-                className="text-xs sm:text-sm bg-white/10 hover:bg-white/20 border border-white/30 px-3 py-1 rounded-full"
+                onClick={() => {
+                  setSubscriptionFilter(null);
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-2 rounded-lg font-semibold transition text-xs sm:text-sm ${subscriptionFilter === null
+                    ? "bg-gray-700 text-white shadow-md"
+                    : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
+                  }`}
               >
-                إخفاء
+                الكل ({subscriptionCounts.all || 0})
+              </button>
+              <button
+                onClick={() => {
+                  setSubscriptionFilter("ساري");
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-2 rounded-lg font-semibold transition text-xs sm:text-sm ${subscriptionFilter === "ساري"
+                    ? "bg-green text-white shadow-md"
+                    : "bg-white text-green border border-green hover:bg-green/10"
+                  }`}
+              >
+                ساري ({subscriptionCounts["ساري"] || 0})
+              </button>
+              <button
+                onClick={() => {
+                  setSubscriptionFilter("قارب على الانتهاء");
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-2 rounded-lg font-semibold transition text-xs sm:text-sm ${subscriptionFilter === "قارب على الانتهاء"
+                    ? "bg-black text-white shadow-md"
+                    : "bg-white text-black border border-black hover:bg-gray-200"
+                  }`}
+              >
+                قارب على الانتهاء ({subscriptionCounts["قارب على الانتهاء"] || 0})
+              </button>
+              <button
+                onClick={() => {
+                  setSubscriptionFilter("منتهي");
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-2 rounded-lg font-semibold transition text-xs sm:text-sm ${subscriptionFilter === "منتهي"
+                    ? "bg-red text-white shadow-md"
+                    : "bg-white text-red border border-red hover:bg-red/10"
+                  }`}
+              >
+                منتهي ({subscriptionCounts["منتهي"] || 0})
               </button>
             </div>
-          </div>
-        )}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
-          <div className="flex flex-wrap gap-2 items-center order-1 lg:order-1 justify-end">
-            <span className="text-sm font-semibold text-gray-600">تصفية:</span>
-            <button
-              onClick={() => {
-                setSubscriptionFilter(null);
-                setCurrentPage(1);
-              }}
-              className={`px-3 py-2 rounded-lg font-semibold transition text-xs sm:text-sm ${
-                subscriptionFilter === null
-                  ? "bg-gray-700 text-white shadow-md"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
-              }`}
-            >
-              الكل ({subscriptionCounts.all || 0})
-            </button>
-            <button
-              onClick={() => {
-                setSubscriptionFilter("ساري");
-                setCurrentPage(1);
-              }}
-              className={`px-3 py-2 rounded-lg font-semibold transition text-xs sm:text-sm ${
-                subscriptionFilter === "ساري"
-                  ? "bg-green text-white shadow-md"
-                  : "bg-white text-green border border-green hover:bg-green/10"
-              }`}
-            >
-               ساري ({subscriptionCounts["ساري"] || 0})
-            </button>
-            <button
-              onClick={() => {
-                setSubscriptionFilter("قارب على الانتهاء");
-                setCurrentPage(1);
-              }}
-              className={`px-3 py-2 rounded-lg font-semibold transition text-xs sm:text-sm ${
-                subscriptionFilter === "قارب على الانتهاء"
-                  ? "bg-black text-white shadow-md"
-                  : "bg-white text-black border border-black hover:bg-gray-200"
-              }`}
-            >
-               قارب على الانتهاء ({subscriptionCounts["قارب على الانتهاء"] || 0})
-            </button>
-            <button
-              onClick={() => {
-                setSubscriptionFilter("منتهي");
-                setCurrentPage(1);
-              }}
-              className={`px-3 py-2 rounded-lg font-semibold transition text-xs sm:text-sm ${
-                subscriptionFilter === "منتهي"
-                  ? "bg-red text-white shadow-md"
-                  : "bg-white text-red border border-red hover:bg-red/10"
-              }`}
-            >
-              منتهي ({subscriptionCounts["منتهي"] || 0})
-            </button>
-          </div>
 
-          {/* CENTER: Search Input */}
-          <div className="flex w-full lg:w-auto items-center gap-2 rounded-lg border bg-white p-2 shadow-sm order-2 lg:order-2 lg:flex-1 lg:mx-4 max-w-md lg:max-w-2xl">
-            <input
-              ref={searchInputRef}
-              type="text"
-              placeholder="ابحث عن المستخدم .."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="w-full bg-transparent px-2 outline-none"
-            />
-            <button
-              type="button"
-              onClick={() => {
-                setSearch("");
-                setCurrentPage(1);
-              }}
-              disabled={!search}
-              className="rounded-md bg-red px-3 py-1 text-sm font-semibold text-white transition hover:bg-red-600"
-            >
-              حذف
-            </button>
-            <button
-              type="button"
-              disabled={!search}
-              className="rounded-md border px-3 py-1 text-sm font-semibold text-gray-600 transition hover:bg-green hover:text-white hover:border-white disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              بحث
-            </button>
-          </div>
+            {/* CENTER: Search Input */}
+            <div className="flex w-full lg:w-auto items-center gap-2 rounded-lg border bg-white p-2 shadow-sm order-2 lg:order-2 lg:flex-1 lg:mx-4 max-w-md lg:max-w-2xl">
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="ابحث عن المستخدم .."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full bg-transparent px-2 outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch("");
+                  setCurrentPage(1);
+                }}
+                disabled={!search}
+                className="rounded-md bg-red px-3 py-1 text-sm font-semibold text-white transition hover:bg-red-600"
+              >
+                حذف
+              </button>
+              <button
+                type="button"
+                disabled={!search}
+                className="rounded-md border px-3 py-1 text-sm font-semibold text-gray-600 transition hover:bg-green hover:text-white hover:border-white disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                بحث
+              </button>
+            </div>
 
 
- {/* LEFT: Statistics and Back Buttons */}
-          <div className="flex items-center gap-2 order-3 lg:order-3">
-            <Link
-              to="/Charts"
-              className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-md transition hover:bg-red-50"
-            >
-              <FaChartBar className="text-red text-xl" />
-              <span className="font-semibold">الاحصائيات</span>
-            </Link>
+            {/* LEFT: Statistics and Back Buttons */}
+            <div className="flex items-center gap-2 order-3 lg:order-3">
+              <Link
+                to="/Charts"
+                className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-md transition hover:bg-red-50"
+              >
+                <FaChartBar className="text-red text-xl" />
+                <span className="font-semibold">الاحصائيات</span>
+              </Link>
 
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-red shadow-md transition hover:bg-red-50"
-            >
-              <FaArrowLeft className="text-red text-lg" />
-              <span className="font-semibold">رجوع</span>
-            </button>
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-red shadow-md transition hover:bg-red-50"
+              >
+                <FaArrowLeft className="text-red text-lg" />
+                <span className="font-semibold">رجوع</span>
+              </button>
+            </div>
+
           </div>
-         
         </div>
-      </div>
 
-<div className="hidden md:block overflow-x-auto bg-white shadow-lg rounded-lg">
-      <table className="w-full table-auto border-collapse">
-        <thead>
-          <tr className="bg-red text-white">
-            <th className="px-1 py-3 text-right">الاسم</th>
-         
-            <th className="px-1 py-3 text-right">الرقم التعريفي</th>
-            <th className="px-1 py-3 text-right">الهاتف</th>
-            <th className="px-1 py-3 text-right">تاريخ التسجيل</th>
-            <th className="px-1 py-3 text-center">تاريخ التجديد </th>
-            <th className="px-1 py-3 text-right"> المدة</th>
-            <th className="px-1 py-3 text-center">عدد الأيام</th>
-            <th className="px-1 py-3 text-center">الأيام المستخدمة</th>
-            <th className="px-1 py-3 text-center">  اخر زيارة</th>
-            <th className="px-1 py-3 text-center"> انتهاء الاشتراك</th>
-            <th className="px-1 py-3 text-center"> قيمة الباقة  </th>
-            <th className="px-1 py-3 text-center"> اسم الباقة</th>
-            <th className="px-1 py-3 text-center">الإجراءات</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentUsers.map((user) => {
-             const joinDate = new Date(user.joinDate);
-             const today = new Date();
-             const diffTime = today - joinDate;
-             const daysSinceJoin = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-             const daysLeftInMonth = 30 - daysSinceJoin;
-             const remainingDays = user.totalDays - user.usedDays;
-     
-             const isExpiredByDate = daysSinceJoin >= 30;
-             const isExpiredByUsage = remainingDays <= 0;
-             const isExpired = isExpiredByDate || isExpiredByUsage;
-     
-             const isWarningByDate = !isExpired && daysLeftInMonth === 7;
-             const isWarningByUsage = !isExpired && remainingDays <= 3;
-            const isWarning = isWarningByDate || isWarningByUsage;
+        <div className="hidden md:block overflow-x-auto bg-white shadow-lg rounded-lg">
+          <table className="w-full table-auto border-collapse">
+            <thead>
+              <tr className="bg-red text-white">
+                <th className="px-1 py-3 text-right">الاسم</th>
 
-            const status = getSubscriptionStatus(user);
-            return (
-            <tr key={user._id} className="border-b hover:bg-gray-50 transition">
-              <td className="px-1 py-3">{user.name}</td>
-         
-              <td className="px-1 py-3 break-words">{user.seq}</td>
-              <td className="px-1 py-3">{user.mobileNumber}</td>
-              <td className="px-1 py-3">
-                {new Date(user.joinDate).toLocaleDateString("ar-EG")}
-              </td>
-              <td className="px-1 py-3 text-center">
+                <th className="px-1 py-3 text-right">الرقم التعريفي</th>
+                <th className="px-1 py-3 text-right">الهاتف</th>
+                <th className="px-1 py-3 text-right">تاريخ التسجيل</th>
+                <th className="px-1 py-3 text-center">تاريخ التجديد </th>
+                <th className="px-1 py-3 text-right"> المدة</th>
+                <th className="px-1 py-3 text-center">عدد الأيام</th>
+                <th className="px-1 py-3 text-center">الأيام المستخدمة</th>
+                <th className="px-1 py-3 text-center">  اخر زيارة</th>
+                <th className="px-1 py-3 text-center"> انتهاء الاشتراك</th>
+                <th className="px-1 py-3 text-center"> قيمة الباقة  </th>
+                <th className="px-1 py-3 text-center"> اسم الباقة</th>
+                <th className="px-1 py-3 text-center">الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentUsers.map((user) => {
+                const joinDate = new Date(user.joinDate);
+                const today = new Date();
+                const diffTime = today - joinDate;
+                const daysSinceJoin = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                const daysLeftInMonth = 30 - daysSinceJoin;
+                const remainingDays = user.totalDays - user.usedDays;
 
-{new Date(user.renewalDate).toLocaleDateString("ar-EG")}
-</td>
-              <td className="px-1 py-3 text-center">
-  {timeAgo(user.renewalDate)}
-</td>
+                const isExpiredByDate = daysSinceJoin >= 30;
+                const isExpiredByUsage = remainingDays <= 0;
+                const isExpired = isExpiredByDate || isExpiredByUsage;
 
+                const isWarningByDate = !isExpired && daysLeftInMonth === 7;
+                const isWarningByUsage = !isExpired && remainingDays <= 3;
+                const isWarning = isWarningByDate || isWarningByUsage;
 
-              <td className=" px-1 py-3 text-center">{user.totalDays}</td>
-              <td className="px-1 py-3 text-center">{user.usedDays}</td>
-              <td className="p-4 text-center">
-  {Array.isArray(user.gymVisits)
-    ? user.gymVisits.at(-1)
-    : user.gymVisits ?? "-"}
-</td>
-           
-            
-           
-              <td className="px-1 py-3 text-center">
-  {status === "منتهي" ? (
-    <span className="text-white bg-red px-2 py-1 rounded-md font-bold">
-      منتهي
-    </span>
-  ) : status === "قارب على الانتهاء" ? (
-    <span className="bg-black text-white px-2 py-1 rounded-md font-bold">
-      قارب على الانتهاء
-    </span>
-  ) : (
-    <span className="bg-green text-white px-2 py-1 rounded-md font-bold">
-      ساري
-    </span>
-  )}
-</td>
+                const status = getSubscriptionStatus(user);
+                return (
+                  <tr key={user._id} className="border-b hover:bg-gray-50 transition">
+                    <td className="px-1 py-3">{user.name}</td>
+
+                    <td className="px-1 py-3 break-words">{user.seq}</td>
+                    <td className="px-1 py-3">{user.mobileNumber}</td>
+                    <td className="px-1 py-3">
+                      {new Date(user.joinDate).toLocaleDateString("ar-EG")}
+                    </td>
+                    <td className="px-1 py-3 text-center">
+
+                      {new Date(user.renewalDate).toLocaleDateString("ar-EG")}
+                    </td>
+                    <td className="px-1 py-3 text-center">
+                      {timeAgo(user.renewalDate)}
+                    </td>
 
 
-<td className="px-1 py-3 text-center">{user.packagePrice}</td>
-              <td className="px-1 py-3 text-center">{user.packageName}</td>
-              <td className="px-1 py-3 flex flex-wrap justify-center gap-2">
-                <Link to={`/EditMember/${user._id}`}>
-                  <button className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm">
-                    تعديل
-                  </button>
-                </Link>
-                <button
-                  onClick={() => handleDelete(user._id)}
-                  className="bg-red hover:bg-red text-white px-4 py-2 rounded-md text-sm"
-                >
-                  حذف
-                </button>
+                    <td className=" px-1 py-3 text-center">{user.totalDays}</td>
+                    <td className="px-1 py-3 text-center">{user.usedDays}</td>
+                    <td className="p-4 text-center">
+                      {Array.isArray(user.gymVisits)
+                        ? user.gymVisits.at(-1)
+                        : user.gymVisits ?? "-"}
+                    </td>
 
-            
-                <button
-  onClick={() => handleAddVisit(user._id)}
-  disabled={status === "منتهي" || visitingId === user._id}
-  className={`px-4 py-2 rounded-md text-sm transition ${
-    status === "منتهي"
-      ? "bg-gray-400 cursor-not-allowed text-white"
-      : "bg-green hover:bg-green text-white"
-  } ${visitingId === user._id ? "opacity-70 cursor-wait" : ""}`}
->
-  {visitingId === user._id ? (
-    <span className="flex items-center gap-2">
-      <FaSpinner className="animate-spin" />
-      جاري التسجيل...
-    </span>
-  ) : (
-    "تسجيل الحضور"
-  )}
-</button>
 
-  {user.mobileNumber && (
-    <button
-      onClick={() => handleWhatsAppClick(user._id, user.mobileNumber)}
-      className="bg-green hover:bg-green text-white px-4 py-2 rounded-md text-sm flex items-center gap-2"
-    >
-      <FaWhatsapp className="text-white" />
-      واتساب
-    </button>
-  )}
-{/* 
+
+                    <td className="px-1 py-3 text-center">
+                      {status === "منتهي" ? (
+                        <span className="text-white bg-red px-2 py-1 rounded-md font-bold">
+                          منتهي
+                        </span>
+                      ) : status === "قارب على الانتهاء" ? (
+                        <span className="bg-black text-white px-2 py-1 rounded-md font-bold">
+                          قارب على الانتهاء
+                        </span>
+                      ) : (
+                        <span className="bg-green text-white px-2 py-1 rounded-md font-bold">
+                          ساري
+                        </span>
+                      )}
+                    </td>
+
+
+                    <td className="px-1 py-3 text-center">{user.packagePrice}</td>
+                    <td className="px-1 py-3 text-center">{user.packageName}</td>
+                    <td className="px-1 py-3 flex flex-wrap justify-center gap-2">
+                      <Link to={`/EditMember/${user._id}`}>
+                        <button className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm">
+                          تعديل
+                        </button>
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(user._id)}
+                        className="bg-red hover:bg-red text-white px-4 py-2 rounded-md text-sm"
+                      >
+                        حذف
+                      </button>
+
+
+                      <button
+                        onClick={() => handleAddVisit(user._id)}
+                        disabled={status === "منتهي" || visitingId === user._id}
+                        className={`px-4 py-2 rounded-md text-sm transition ${status === "منتهي"
+                            ? "bg-gray-400 cursor-not-allowed text-white"
+                            : "bg-green hover:bg-green text-white"
+                          } ${visitingId === user._id ? "opacity-70 cursor-wait" : ""}`}
+                      >
+                        {visitingId === user._id ? (
+                          <span className="flex items-center gap-2">
+                            <FaSpinner className="animate-spin" />
+                            جاري التسجيل...
+                          </span>
+                        ) : (
+                          "تسجيل الحضور"
+                        )}
+                      </button>
+
+                      {user.mobileNumber && (
+                        <button
+                          onClick={() => handleWhatsAppClick(user._id, user.mobileNumber)}
+                          className="bg-green hover:bg-green text-white px-4 py-2 rounded-md text-sm flex items-center gap-2"
+                        >
+                          <FaWhatsapp className="text-white" />
+                          واتساب
+                        </button>
+                      )}
+                      {/* 
   <button
     onClick={() => handleSendEmail(user._id)}
     className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm"
   >
     ارسال ايميل 
   </button> */}
-              </td>
-            </tr>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="md:hidden space-y-4">
+          {currentUsers.map((user) => {
+            const joinDate = new Date(user.renewalDate);
+            const today = new Date();
+            const diffTime = today - joinDate;
+            const daysSinceJoin = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const daysLeftInMonth = 30 - daysSinceJoin;
+            const remainingDays = user.totalDays - user.usedDays;
+
+            const isExpiredByDate = daysSinceJoin >= 30;
+            const isExpiredByUsage = remainingDays <= 0;
+            const isExpired = isExpiredByDate || isExpiredByUsage;
+
+            const isWarningByDate = !isExpired && daysLeftInMonth === 7;
+            const isWarningByUsage = !isExpired && remainingDays <= 3;
+            const isWarning = isWarningByDate || isWarningByUsage;
+
+            return (
+              <div key={user._id} className="bg-white shadow-md rounded-lg p-4">
+                <p className="font-semibold text-gray-700">الاسم: {user.name}</p>
+                <p className="text-gray-600">الرقم التعريفي: {user.seq}</p>
+                <p className="text-gray-600">الهاتف: {user.mobileNumber}</p>
+                <p className="text-gray-600">قيمة الباقة: {user.packagePrice}</p>
+                <p className="text-gray-600">اسم الباقة: {user.videosName}</p>
+                <p className="text-gray-600">انتهاء الاشتراك:
+
+                  <span className="px-1 py-3">
+                    {isExpired ? (
+                      <span className="text-white bg-red px-2 py-1 rounded-md font-bold">منتهي</span>
+                    ) : isWarning ? (
+                      <span className="bg-black text-white px-2 py-1 rounded-md font-bold">قارب على الانتهاء</span>
+                    ) : (
+                      <span className="bg-green text-white px-2 py-1 rounded-md font-bold">ساري</span>
+                    )}
+                  </span>
+
+
+
+
+                </p>
+                <p className="text-gray-600">
+                  تاريخ التسجيل: {new Date(user.joinDate).toLocaleDateString("ar-EG")}
+                </p>
+
+                <p className="text-gray-600">
+                  المدة:   {timeAgo(user.joinDate)}
+
+                </p>
+                <p className="text-gray-600">
+                  عدد الأيام: {user.totalDays} | الأيام المستخدمة: {user.usedDays}
+                </p>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  <Link className="w-full" to={`/EditMember/${user._id}`}>
+                    <button className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm w-full">
+                      تعديل
+                    </button>
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(user._id)}
+                    className="bg-red hover:bg-red text-white px-4 py-2 rounded-md text-sm w-full"
+                  >
+                    حذف
+                  </button>
+
+                  <button
+                    onClick={() => handleAddVisit(user._id)}
+                    disabled={isExpired || visitingId === user._id}
+                    className={`px-4 py-2 rounded-md text-sm w-full transition ${isExpired
+                        ? "bg-gray-400 cursor-not-allowed text-white"
+                        : "bg-green hover:bg-green text-white"
+                      } ${visitingId === user._id ? "opacity-70 cursor-wait" : ""}`}
+                  >
+                    {visitingId === user._id ? (
+                      <span className="flex items-center justify-center gap-2 w-full">
+                        <FaSpinner className="animate-spin" />
+                        جاري التسجيل...
+                      </span>
+                    ) : (
+                      "تسجيل الحضور"
+                    )}
+                  </button>
+
+                  {user.mobileNumber && (
+                    <button
+                      onClick={() => handleWhatsAppClick(user._id, user.mobileNumber)}
+                      className="bg-green hover:bg-green-500 text-white px-4 py-2 rounded-md text-sm w-full flex items-center justify-center gap-2"
+                    >
+                      <FaWhatsapp className="text-white" />
+                      واتساب
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => handleSendEmail(user._id)}
+                    className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm w-full"
+                  >
+                    ارسال ايميل
+                  </button>
+
+
+                </div>
+              </div>
             );
           })}
-        </tbody>
-      </table>
-    </div>
-  
-    <div className="md:hidden space-y-4">
-      {currentUsers.map((user) => {
-        const joinDate = new Date(user.renewalDate);
-        const today = new Date();
-        const diffTime = today - joinDate;
-        const daysSinceJoin = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        const daysLeftInMonth = 30 - daysSinceJoin;
-        const remainingDays = user.totalDays - user.usedDays;
+        </div>
 
-        const isExpiredByDate = daysSinceJoin >= 30;
-        const isExpiredByUsage = remainingDays <= 0;
-        const isExpired = isExpiredByDate || isExpiredByUsage;
-
-        const isWarningByDate = !isExpired && daysLeftInMonth === 7;
-        const isWarningByUsage = !isExpired && remainingDays <= 3;
-        const isWarning = isWarningByDate || isWarningByUsage;
-
-        return (
-        <div key={user._id} className="bg-white shadow-md rounded-lg p-4">
-          <p className="font-semibold text-gray-700">الاسم: {user.name}</p>
-          <p className="text-gray-600">الرقم التعريفي: {user.seq}</p>
-          <p className="text-gray-600">الهاتف: {user.mobileNumber}</p>
-          <p className="text-gray-600">قيمة الباقة: {user.packagePrice}</p>
-          <p className="text-gray-600">اسم الباقة: {user.videosName}</p>
-          <p className="text-gray-600">انتهاء الاشتراك:
-            
-          <span className="px-1 py-3">
-            {isExpired ? (
-              <span className="text-white bg-red px-2 py-1 rounded-md font-bold">منتهي</span>
-            ) : isWarning ? (
-              <span className="bg-black text-white px-2 py-1 rounded-md font-bold">قارب على الانتهاء</span>
-            ) : (
-              <span className="bg-green text-white px-2 py-1 rounded-md font-bold">ساري</span>
+        {/* أزرار التصفح */}
+        {filteredUsers.length > 0 && (
+          <div className="flex flex-col items-center mt-6 gap-3">
+            <div className="text-sm text-gray-600">
+              عرض {currentUsers.length} من {filteredUsers.length} مستخدم
+            </div>
+            {totalPages > 1 && (
+              <div className="flex justify-center gap-2 flex-wrap">
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index + 1}
+                    onClick={() => paginate(index + 1)}
+                    className={`px-3 py-1 rounded-md border ${currentPage === index + 1
+                        ? "bg-red text-white"
+                        : "bg-white text-gray-600"
+                      }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+              </div>
             )}
-          </span>
-
-            
-            
-            
-             </p>
-          <p className="text-gray-600">
-            تاريخ التسجيل: {new Date(user.joinDate).toLocaleDateString("ar-EG")}
-          </p>
-
-          <p className="text-gray-600">
-             المدة:   {timeAgo(user.joinDate)}
-
-          </p>
-          <p className="text-gray-600">
-            عدد الأيام: {user.totalDays} | الأيام المستخدمة: {user.usedDays}
-          </p>
-          <div className="flex flex-wrap gap-2 mt-3">
-            <Link className="w-full" to={`/EditMember/${user._id}`}>
-              <button className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm w-full">
-                تعديل
-              </button>
-            </Link>
-            <button
-              onClick={() => handleDelete(user._id)}
-              className="bg-red hover:bg-red text-white px-4 py-2 rounded-md text-sm w-full"
-            >
-              حذف
-            </button>
-           
-            <button
-              onClick={() => handleAddVisit(user._id)}
-              disabled={isExpired || visitingId === user._id}
-              className={`px-4 py-2 rounded-md text-sm w-full transition ${
-                isExpired
-                  ? "bg-gray-400 cursor-not-allowed text-white"
-                  : "bg-green hover:bg-green text-white"
-              } ${visitingId === user._id ? "opacity-70 cursor-wait" : ""}`}
-          >
-            {visitingId === user._id ? (
-              <span className="flex items-center justify-center gap-2 w-full">
-                <FaSpinner className="animate-spin" />
-                جاري التسجيل...
-              </span>
-            ) : (
-              "تسجيل الحضور"
-            )}
-          </button>
-
-            {user.mobileNumber && (
-              <button
-                onClick={() => handleWhatsAppClick(user._id, user.mobileNumber)}
-                className="bg-green hover:bg-green-500 text-white px-4 py-2 rounded-md text-sm w-full flex items-center justify-center gap-2"
-              >
-                <FaWhatsapp className="text-white" />
-                واتساب
-              </button>
-            )}
-
-            <button
-              onClick={() => handleSendEmail(user._id)}
-              className="bg-blue hover:bg-blue text-white px-4 py-2 rounded-md text-sm w-full"
-            >
-               ارسال ايميل 
-            </button>
-
-            
           </div>
-        </div>
-            );
-          })}
-    </div>
-  
-    {/* أزرار التصفح */}
-    {filteredUsers.length > 0 && (
-      <div className="flex flex-col items-center mt-6 gap-3">
-        <div className="text-sm text-gray-600">
-          عرض {currentUsers.length} من {filteredUsers.length} مستخدم
-        </div>
-        {totalPages > 1 && (
-          <div className="flex justify-center gap-2 flex-wrap">
-            {[...Array(totalPages)].map((_, index) => (
-              <button
-                key={index + 1}
-                onClick={() => paginate(index + 1)}
-                className={`px-3 py-1 rounded-md border ${
-                  currentPage === index + 1
-                    ? "bg-red text-white"
-                    : "bg-white text-gray-600"
-                }`}
+        )}
+
+        {/* Custom Modal */}
+        {modalData.isOpen && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+            onClick={closeModal}
+          >
+            <div
+              className="bg-white rounded-lg shadow-lg w-11/12 md:w-1/3 p-6 text-center transform transition-all scale-100"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2
+                className={`text-2xl font-bold mb-4 ${modalData.type === "error" ? "text-red" : "text-green"
+                  }`}
               >
-                {index + 1}
+                {modalData.title}
+              </h2>
+              <p className="text-gray-700 text-lg mb-6">{modalData.message}</p>
+              <button
+                onClick={closeModal}
+                className={`px-6 py-2 text-white font-bold rounded-lg shadow-md transition ${modalData.type === "error"
+                    ? "bg-red hover:bg-red"
+                    : "bg-green hover:bg-green"
+                  }`}
+              >
+                حسناً
               </button>
-            ))}
+            </div>
+          </div>
+        )}
+
+        {/* WhatsApp Message Selection Modal */}
+        {whatsappModal.isOpen && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+            onClick={closeWhatsappModal}
+          >
+            <div
+              className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 p-6 text-center transform transition-all scale-100 max-h-screen overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="text-2xl font-bold mb-6 text-gray-800">اختر رسالة</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <button
+                  onClick={() => handleSendWhatsAppMessage("مرحبا بك في ايجل جيم.")}
+                  className="bg-blue hover:bg-blue text-white px-4 py-3 rounded-lg font-bold transition"
+                >
+                  رسالة الترحيب 👋
+                  <p className="text-xs mt-2 font-normal">مرحبا بك في ايجل جيم.</p>
+                </button>
+                <button
+                  onClick={() => handleSendWhatsAppMessage("نتمنى أن تكون بخير، لم نرك منذ فترة. نحن ننتظر عودتك!")}
+                  className="bg-[#b68a35] hover:bg-[#b68a35] text-white px-4 py-3 rounded-lg font-bold transition"
+                >
+                  رسالة الغياب 🤔
+                  <p className="text-xs mt-2 font-normal">لم نرك منذ فترة</p>
+                </button>
+                <button
+                  onClick={() => handleSendWhatsAppMessage("مرحبا، اشتراكك على وشك الانتهاء قريبا جدا. يرجى التجديد.")}
+                  className="bg-[#E54B1D] hover:bg-[#E54B1D] text-white px-4 py-3 rounded-lg font-bold transition"
+                >
+                  انتهاء قريب ⏰
+                  <p className="text-xs mt-2 font-normal">الاشتراك على وشك الانتهاء</p>
+                </button>
+                <button
+                  onClick={() => handleSendWhatsAppMessage("مرحبا، تم انتهاء اشتراكك. يرجى التجديد لمتابعة التدريبات.")}
+                  className="bg-red hover:bg-red text-white px-4 py-3 rounded-lg font-bold transition"
+                >
+                  انتهاء الاشتراك ❌
+                  <p className="text-xs mt-2 font-normal">انتهى الاشتراك</p>
+                </button>
+                <button
+                  onClick={() => handleSendWhatsAppMessage("شكرا لك على تجديد اشتراكك معنا! نتطلع لرؤيتك قريبا.")}
+                  className="bg-green hover:bg-green text-white px-4 py-3 rounded-lg font-bold transition"
+                >
+                  تجديد الاشتراك ✅
+                  <p className="text-xs mt-2 font-normal">شكرا على التجديد</p>
+                </button>
+              </div>
+              <button
+                onClick={closeWhatsappModal}
+                className="mt-6 px-6 py-2 text-gray-600 font-bold rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+              >
+                إلغاء
+              </button>
+            </div>
           </div>
         )}
       </div>
-    )}
-
-    {/* Custom Modal */}
-    {modalData.isOpen && (
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-        onClick={closeModal}
-      >
-        <div
-          className="bg-white rounded-lg shadow-lg w-11/12 md:w-1/3 p-6 text-center transform transition-all scale-100"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <h2
-            className={`text-2xl font-bold mb-4 ${
-              modalData.type === "error" ? "text-red" : "text-green"
-            }`}
-          >
-            {modalData.title}
-          </h2>
-          <p className="text-gray-700 text-lg mb-6">{modalData.message}</p>
-          <button
-            onClick={closeModal}
-            className={`px-6 py-2 text-white font-bold rounded-lg shadow-md transition ${
-              modalData.type === "error"
-                ? "bg-red hover:bg-red"
-                : "bg-green hover:bg-green"
-            }`}
-          >
-            حسناً
-          </button>
-        </div>
-      </div>
-    )}
-
-    {/* WhatsApp Message Selection Modal */}
-    {whatsappModal.isOpen && (
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-        onClick={closeWhatsappModal}
-      >
-        <div
-          className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 p-6 text-center transform transition-all scale-100 max-h-screen overflow-y-auto"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">اختر رسالة</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <button
-              onClick={() => handleSendWhatsAppMessage("مرحبا بك في ايجل جيم.")}
-              className="bg-blue hover:bg-blue text-white px-4 py-3 rounded-lg font-bold transition"
-            >
-              رسالة الترحيب 👋
-              <p className="text-xs mt-2 font-normal">مرحبا بك في ايجل جيم.</p>
-            </button>
-            <button
-              onClick={() => handleSendWhatsAppMessage("نتمنى أن تكون بخير، لم نرك منذ فترة. نحن ننتظر عودتك!")}
-              className="bg-[#b68a35] hover:bg-[#b68a35] text-white px-4 py-3 rounded-lg font-bold transition"
-            >
-              رسالة الغياب 🤔
-              <p className="text-xs mt-2 font-normal">لم نرك منذ فترة</p>
-            </button>
-            <button
-              onClick={() => handleSendWhatsAppMessage("مرحبا، اشتراكك على وشك الانتهاء قريبا جدا. يرجى التجديد.")}
-              className="bg-[#E54B1D] hover:bg-[#E54B1D] text-white px-4 py-3 rounded-lg font-bold transition"
-            >
-              انتهاء قريب ⏰
-              <p className="text-xs mt-2 font-normal">الاشتراك على وشك الانتهاء</p>
-            </button>
-            <button
-              onClick={() => handleSendWhatsAppMessage("مرحبا، تم انتهاء اشتراكك. يرجى التجديد لمتابعة التدريبات.")}
-              className="bg-red hover:bg-red text-white px-4 py-3 rounded-lg font-bold transition"
-            >
-              انتهاء الاشتراك ❌
-              <p className="text-xs mt-2 font-normal">انتهى الاشتراك</p>
-            </button>
-            <button
-              onClick={() => handleSendWhatsAppMessage("شكرا لك على تجديد اشتراكك معنا! نتطلع لرؤيتك قريبا.")}
-              className="bg-green hover:bg-green text-white px-4 py-3 rounded-lg font-bold transition"
-            >
-              تجديد الاشتراك ✅
-              <p className="text-xs mt-2 font-normal">شكرا على التجديد</p>
-            </button>
-          </div>
-          <button
-            onClick={closeWhatsappModal}
-            className="mt-6 px-6 py-2 text-gray-600 font-bold rounded-lg border border-gray-300 hover:bg-gray-100 transition"
-          >
-            إلغاء
-          </button>
-        </div>
-      </div>
-    )}
-  </div>
-  
+    </>
   );
 };
 
