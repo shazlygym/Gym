@@ -118,14 +118,7 @@ const Dashboard = () => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        let url = `${apiUrl}/getAllUsers`;
-        
-        // 🔹 إذا كان هناك فلتر مختار، استخدم الـ endpoint المخصص
-        if (subscriptionFilter) {
-          url = `${apiUrl}/getUsersBySubscriptionStatus?status=${subscriptionFilter}`;
-        }
-        
-        const res = await axios.get(url);
+        const res = await axios.get(`${apiUrl}/getAllUsers`);
         setUsers(res.data);
       } catch (err) {
         console.error("خطأ أثناء جلب المستخدمين:", err);
@@ -140,7 +133,7 @@ const Dashboard = () => {
       }
     };
     fetchUsers();
-  }, [subscriptionFilter]);
+  }, []);
 
 
   // 🟢 تسجيل حضور المستخدم
@@ -204,34 +197,69 @@ const Dashboard = () => {
   };
 
 
+  const getSubscriptionStatus = (user) => {
+    const renewalDate = user.renewalDate ? new Date(user.renewalDate) : null;
+    const today = new Date();
+    let status = "ساري";
+    if (renewalDate) {
+      const diffTime = today - renewalDate;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      const daysLeft = 30 - diffDays;
+      if (diffDays >= 30) {
+        status = "منتهي";
+      } else if (daysLeft <= 5) {
+        status = "قارب على الانتهاء";
+      }
+    }
+    return status;
+  };
+
   // 🔍 فلترة المستخدمين حسب الاسم
-  const filteredUsers = users.filter((u) => {
+  const searchedUsers = users.filter((u) => {
     const lowerSearch = search.toLowerCase();
     return (
       u.name.toLowerCase().includes(lowerSearch) ||
-      String(u.seq).includes(lowerSearch) // 👈 إضافة البحث بالرقم التسلسلي
+      String(u.seq).includes(lowerSearch)
     );
-  }).sort((a, b) => {
-    // 🔹 فرز المستخدمين: المنتهي اشتراكهم أولاً
-    const today = new Date();
-    
-    // حساب حالة المستخدم الأول (a)
-    const renewalDateA = a.renewalDate ? new Date(a.renewalDate) : null;
-    const diffTimeA = today - renewalDateA;
-    const diffDaysA = Math.floor(diffTimeA / (1000 * 60 * 60 * 24));
-    const isExpiredA = diffDaysA >= 30;
-    
-    // حساب حالة المستخدم الثاني (b)
-    const renewalDateB = b.renewalDate ? new Date(b.renewalDate) : null;
-    const diffTimeB = today - renewalDateB;
-    const diffDaysB = Math.floor(diffTimeB / (1000 * 60 * 60 * 24));
-    const isExpiredB = diffDaysB >= 30;
-    
-    // وضع المنتهي اشتراكهم أولاً
-    if (isExpiredA && !isExpiredB) return -1;
-    if (!isExpiredA && isExpiredB) return 1;
-    return 0;
   });
+
+  const subscriptionCounts = searchedUsers.reduce(
+    (acc, user) => {
+      const status = getSubscriptionStatus(user);
+      acc.all += 1;
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    },
+    { all: 0 }
+  );
+
+  const filteredUsers = searchedUsers
+    .filter((user) => {
+      if (!subscriptionFilter) return true;
+      const status = getSubscriptionStatus(user);
+      return status === subscriptionFilter;
+    })
+    .sort((a, b) => {
+      // 🔹 فرز المستخدمين: المنتهي اشتراكهم أولاً
+      const today = new Date();
+      
+      // حساب حالة المستخدم الأول (a)
+      const renewalDateA = a.renewalDate ? new Date(a.renewalDate) : null;
+      const diffTimeA = today - renewalDateA;
+      const diffDaysA = Math.floor(diffTimeA / (1000 * 60 * 60 * 24));
+      const isExpiredA = diffDaysA >= 30;
+      
+      // حساب حالة المستخدم الثاني (b)
+      const renewalDateB = b.renewalDate ? new Date(b.renewalDate) : null;
+      const diffTimeB = today - renewalDateB;
+      const diffDaysB = Math.floor(diffTimeB / (1000 * 60 * 60 * 24));
+      const isExpiredB = diffDaysB >= 30;
+      
+      // وضع المنتهي اشتراكهم أولاً
+      if (isExpiredA && !isExpiredB) return -1;
+      if (!isExpiredA && isExpiredB) return 1;
+      return 0;
+    });
   
 
   // 🧮 حساب المستخدمين المعروضين حسب الصفحة الحالية
@@ -294,29 +322,6 @@ const Dashboard = () => {
     }
 
 
-    const renewalDate = users.renewalDate ? new Date(users.renewalDate) : null;
-    const today = new Date();
-    
-    let status = "ساري";
-    
-    if (renewalDate) {
-      const diffTime = today - renewalDate;
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      const daysLeft = 30 - diffDays;
-    
-      if (diffDays >= 30) {
-        status = "منتهي";
-      } else if (daysLeft === 7) {
-        status = "قارب على الانتهاء";
-      }
-
-      console.log("renewal:", users.renewalDate);
-console.log("days passed:", diffDays);
-
-    }
-    
-    
-
   return (
     <div className="p-4 bg-gray-100 min-h-screen" dir="rtl">
       <div className="mb-6">
@@ -339,7 +344,7 @@ console.log("days passed:", diffDays);
                   : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
               }`}
             >
-              الكل
+              الكل ({subscriptionCounts.all || 0})
             </button>
             <button
               onClick={() => {
@@ -352,7 +357,7 @@ console.log("days passed:", diffDays);
                   : "bg-white text-green border border-green hover:bg-green/10"
               }`}
             >
-               ساري
+               ساري ({subscriptionCounts["ساري"] || 0})
             </button>
             <button
               onClick={() => {
@@ -365,7 +370,7 @@ console.log("days passed:", diffDays);
                   : "bg-white text-black border border-black hover:bg-gray-200"
               }`}
             >
-               قارب على الانتهاء
+               قارب على الانتهاء ({subscriptionCounts["قارب على الانتهاء"] || 0})
             </button>
             <button
               onClick={() => {
@@ -378,7 +383,7 @@ console.log("days passed:", diffDays);
                   : "bg-white text-red border border-red hover:bg-red/10"
               }`}
             >
-              منتهي
+              منتهي ({subscriptionCounts["منتهي"] || 0})
             </button>
           </div>
 
@@ -473,25 +478,9 @@ console.log("days passed:", diffDays);
      
              const isWarningByDate = !isExpired && daysLeftInMonth === 7;
              const isWarningByUsage = !isExpired && remainingDays <= 3;
-             const isWarning = isWarningByDate || isWarningByUsage;
+            const isWarning = isWarningByDate || isWarningByUsage;
 
-
-             const renewalDate = user.renewalDate ? new Date(user.renewalDate) : null;
-           
-             let status = "ساري";
-           
-             if (renewalDate) {
-               const diffTime = today - renewalDate;
-               const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-               const daysLeft = 30 - diffDays;
-           
-               if (diffDays >= 30) {
-                 status = "منتهي";
-               } else if (daysLeft <= 5) {
-                 status = "قارب على الانتهاء";
-               }
-             
-              }
+            const status = getSubscriptionStatus(user);
             return (
             <tr key={user._id} className="border-b hover:bg-gray-50 transition">
               <td className="px-1 py-3">{user.name}</td>
@@ -704,21 +693,28 @@ console.log("days passed:", diffDays);
     </div>
   
     {/* أزرار التصفح */}
-    {totalPages > 1 && (
-      <div className="flex justify-center mt-6 gap-2 flex-wrap">
-        {[...Array(totalPages)].map((_, index) => (
-          <button
-            key={index + 1}
-            onClick={() => paginate(index + 1)}
-            className={`px-3 py-1 rounded-md border ${
-              currentPage === index + 1
-                ? "bg-red text-white"
-                : "bg-white text-gray-600"
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
+    {filteredUsers.length > 0 && (
+      <div className="flex flex-col items-center mt-6 gap-3">
+        <div className="text-sm text-gray-600">
+          عرض {currentUsers.length} من {filteredUsers.length} مستخدم
+        </div>
+        {totalPages > 1 && (
+          <div className="flex justify-center gap-2 flex-wrap">
+            {[...Array(totalPages)].map((_, index) => (
+              <button
+                key={index + 1}
+                onClick={() => paginate(index + 1)}
+                className={`px-3 py-1 rounded-md border ${
+                  currentPage === index + 1
+                    ? "bg-red text-white"
+                    : "bg-white text-gray-600"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     )}
 
