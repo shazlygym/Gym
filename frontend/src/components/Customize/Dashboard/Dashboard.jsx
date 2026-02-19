@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaChartBar, FaWhatsapp, FaSpinner } from "react-icons/fa";
+import { FaArrowLeft, FaChartBar, FaWhatsapp, FaSpinner, FaMoon, FaStarAndCrescent, FaStar } from "react-icons/fa";
+import { GiLantern } from "react-icons/gi";
 import notificationSound from "../../../tones/notification_sound.mp3";
 import errorSound from "../../../tones/message_notification.mp3";
 
@@ -16,6 +17,7 @@ const Dashboard = () => {
   const [visitingId, setVisitingId] = useState(null); // 🆕 حالة التحميل لزر تسجيل الحضور
   const searchInputRef = useRef(null); // 🆕 مرجع حقل البحث
   const [subscriptionFilter, setSubscriptionFilter] = useState(null); // 🔹 فلتر حالة الاشتراك
+  const [showRamadanBanner, setShowRamadanBanner] = useState(true);
 
   // Modal State
   const [modalData, setModalData] = useState({
@@ -323,14 +325,88 @@ const Dashboard = () => {
 
 
   return (
-    <div className="p-4 bg-gray-100 min-h-screen" dir="rtl">
+    <div className="relative p-4 bg-gray-100 min-h-screen overflow-hidden" dir="rtl">
+      <div className="pointer-events-none absolute inset-x-0 -top-4 z-20 flex justify-between px-4 sm:px-10">
+        <div className="flex items-start gap-5 sm:gap-8">
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-px h-20 sm:h-24 bg-[#FACC6B]" />
+            <GiLantern className="text-[#FACC6B] text-4xl sm:text-5xl md:text-6xl drop-shadow-[0_0_12px_rgba(250,204,107,0.9)] animate-float1" />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-px h-16 sm:h-20 bg-[#FACC6B]" />
+            <FaMoon className="text-[#FDE68A] text-3xl sm:text-4xl md:text-5xl drop-shadow-[0_0_12px_rgba(253,230,138,0.9)] animate-float2" />
+          </div>
+          <div className="hidden sm:flex flex-col items-center gap-2">
+            <div className="w-px h-24 bg-[#FACC6B]" />
+            <GiLantern className="text-[#FACC6B] text-4xl sm:text-5xl md:text-6xl drop-shadow-[0_0_12px_rgba(250,204,107,0.9)] animate-float1" />
+          </div>
+        </div>
+
+        <div className="flex items-start gap-5 sm:gap-8">
+          <div className="hidden sm:flex flex-col items-center gap-2">
+            <div className="w-px h-22 bg-[#FACC6B]" />
+            <GiLantern className="text-[#FACC6B] text-4xl sm:text-5xl md:text-6xl drop-shadow-[0_0_12px_rgba(250,204,107,0.9)] animate-float2" />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-px h-18 sm:h-22 bg-[#FACC6B]" />
+            <FaStarAndCrescent className="text-[#FDE68A] text-4xl sm:text-5xl md:text-6xl drop-shadow-[0_0_12px_rgba(253,230,138,0.9)] animate-float1" />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-px h-20 sm:h-24 bg-[#FACC6B]" />
+            <GiLantern className="text-[#FACC6B] text-4xl sm:text-5xl md:text-6xl drop-shadow-[0_0_12px_rgba(250,204,107,0.9)] animate-float2" />
+          </div>
+        </div>
+      </div>
+
+      <div className="pointer-events-none absolute right-0 top-0 z-10 origin-top-right rotate-12">
+        <div className="h-1 w-56 sm:w-80 md:w-96 bg-gradient-to-l from-[#FACC6B] via-[#FDE68A] to-[#FACC6B] shadow-[0_0_16px_rgba(250,204,107,0.9)] rounded-full" />
+        <div className="mt-1 flex justify-between px-2">
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FACC6B] shadow-[0_0_10px_rgba(250,204,107,0.9)]" />
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FDE68A] shadow-[0_0_10px_rgba(253,230,138,0.9)]" />
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FACC6B] shadow-[0_0_10px_rgba(250,204,107,0.9)]" />
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FDE68A] shadow-[0_0_10px_rgba(253,230,138,0.9)]" />
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FACC6B] shadow-[0_0_10px_rgba(250,204,107,0.9)]" />
+        </div>
+      </div>
+
+      <div className="pointer-events-none absolute left-0 top-0 z-10 origin-top-left -rotate-12">
+        <div className="h-1 w-56 sm:w-80 md:w-96 bg-gradient-to-r from-[#FACC6B] via-[#FDE68A] to-[#FACC6B] shadow-[0_0_16px_rgba(250,204,107,0.9)] rounded-full" />
+        <div className="mt-1 flex justify-between px-2">
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FACC6B] shadow-[0_0_10px_rgba(250,204,107,0.9)]" />
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FDE68A] shadow-[0_0_10px_rgba(253,230,138,0.9)]" />
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FACC6B] shadow-[0_0_10px_rgba(250,204,107,0.9)]" />
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FDE68A] shadow-[0_0_10px_rgba(253,230,138,0.9)]" />
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FACC6B] shadow-[0_0_10px_rgba(250,204,107,0.9)]" />
+        </div>
+      </div>
+
       <div className="mb-6">
-        {/* Title */}
         <h1 className="text-3xl font-bold text-gray-600 mb-4">لوحة التحكم</h1>
-        
-        {/* Main Header Row: Left | Center | Right */}
+        {showRamadanBanner && (
+          <div className="mb-4 rounded-2xl bg-gradient-to-l from-red to-black text-white px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
+            <div>
+              <p className="text-xl font-semibold">رمضان كريم</p>
+              <p className="text-sm text-red-100">
+                نتمنى لك شهرا مليئا بالصحة والإنجاز والالتزام في الجيم.
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 text-3xl sm:text-4xl">
+                <FaMoon className="text-[#FDE68A] drop-shadow-[0_0_10px_rgba(253,230,138,0.9)]" />
+                <FaStar className="text-[#FEF3C7] drop-shadow-[0_0_10px_rgba(254,243,199,0.9)]" />
+                <GiLantern className="text-[#FACC6B] drop-shadow-[0_0_10px_rgba(250,204,107,0.9)]" />
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowRamadanBanner(false)}
+                className="text-xs sm:text-sm bg-white/10 hover:bg-white/20 border border-white/30 px-3 py-1 rounded-full"
+              >
+                إخفاء
+              </button>
+            </div>
+          </div>
+        )}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
-          {/* RIGHT: Subscription Filters */}
           <div className="flex flex-wrap gap-2 items-center order-1 lg:order-1 justify-end">
             <span className="text-sm font-semibold text-gray-600">تصفية:</span>
             <button
