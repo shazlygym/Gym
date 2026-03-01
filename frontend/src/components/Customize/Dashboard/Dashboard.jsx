@@ -235,14 +235,20 @@ const Dashboard = () => {
   const getSubscriptionStatus = (user) => {
     const renewalDate = user.renewalDate ? new Date(user.renewalDate) : null;
     const today = new Date();
+    const remainingDays = user.totalDays - user.usedDays;
+    
     let status = "ساري";
     if (renewalDate) {
       const diffTime = today - renewalDate;
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
       const daysLeft = 30 - diffDays;
-      if (diffDays >= 30) {
+      
+      const isExpiredByDate = diffDays >= 30;
+      const isExpiredByUsage = remainingDays <= 0;
+      
+      if (isExpiredByDate || isExpiredByUsage) {
         status = "منتهي";
-      } else if (daysLeft <= 5) {
+      } else if (daysLeft <= 5 || remainingDays <= 3) {
         status = "قارب على الانتهاء";
       }
     }
@@ -275,25 +281,27 @@ const Dashboard = () => {
       return status === subscriptionFilter;
     })
     .sort((a, b) => {
-      // 🔹 فرز المستخدمين: المنتهي اشتراكهم أولاً
+      // 🔹 فرز المستخدمين: المنتهي اشتراكهم أولاً بناءً على تاريخ التجديد
       const today = new Date();
 
-      // حساب حالة المستخدم الأول (a)
-      const renewalDateA = a.renewalDate ? new Date(a.renewalDate) : null;
-      const diffTimeA = today - renewalDateA;
-      const diffDaysA = Math.floor(diffTimeA / (1000 * 60 * 60 * 24));
-      const isExpiredA = diffDaysA >= 30;
+      const getExpiryInfo = (user) => {
+        const renewalDate = user.renewalDate ? new Date(user.renewalDate) : new Date(0);
+        const diffTime = today - renewalDate;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const remainingDays = user.totalDays - user.usedDays;
+        const isExpired = diffDays >= 30 || remainingDays <= 0;
+        return { isExpired, renewalDate };
+      };
 
-      // حساب حالة المستخدم الثاني (b)
-      const renewalDateB = b.renewalDate ? new Date(b.renewalDate) : null;
-      const diffTimeB = today - renewalDateB;
-      const diffDaysB = Math.floor(diffTimeB / (1000 * 60 * 60 * 24));
-      const isExpiredB = diffDaysB >= 30;
+      const infoA = getExpiryInfo(a);
+      const infoB = getExpiryInfo(b);
 
-      // وضع المنتهي اشتراكهم أولاً
-      if (isExpiredA && !isExpiredB) return -1;
-      if (!isExpiredA && isExpiredB) return 1;
-      return 0;
+      // 1. المنتهي أولاً
+      if (infoA.isExpired && !infoB.isExpired) return -1;
+      if (!infoA.isExpired && infoB.isExpired) return 1;
+
+      // 2. إذا كان كلاهما منتهي أو كلاهما ساري، نرتب حسب تاريخ التجديد (الأقدم أولاً)
+      return infoA.renewalDate - infoB.renewalDate;
     });
 
 
@@ -658,16 +666,16 @@ const Dashboard = () => {
 
         <div className="md:hidden space-y-3">
           {currentUsers.map((user) => {
-            const joinDate = new Date(user.renewalDate);
+            const renewalDate = new Date(user.renewalDate || user.joinDate);
             const today = new Date();
-            const diffTime = today - joinDate;
-            const daysSinceJoin = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            const daysLeftInMonth = 30 - daysSinceJoin;
+            const diffTime = today - renewalDate;
+            const daysSinceRenewal = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const daysLeftInMonth = 30 - daysSinceRenewal;
             const remainingDays = user.totalDays - user.usedDays;
-            const isExpiredByDate = daysSinceJoin >= 30;
+            const isExpiredByDate = daysSinceRenewal >= 30;
             const isExpiredByUsage = remainingDays <= 0;
             const isExpired = isExpiredByDate || isExpiredByUsage;
-            const isWarningByDate = !isExpired && daysLeftInMonth === 7;
+            const isWarningByDate = !isExpired && daysLeftInMonth <= 5;
             const isWarningByUsage = !isExpired && remainingDays <= 3;
             const isWarning = isWarningByDate || isWarningByUsage;
 
