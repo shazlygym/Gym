@@ -1,0 +1,209 @@
+/* 
+  Charts.css — Modern UI styles for Charts page
+*/
+
+.charts-page {
+  background: #f8fafc;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem;
+}
+
+/* KPI Card with Modern Border Fill on Hover */
+.kpi-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 1.5rem;
+  padding: 1.75rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  border: 2px solid transparent;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  z-index: 1;
+}
+
+/* Themes */
+.kpi-card.theme-red { --theme-color: rgb(255, 3, 54);    border:1px solid rgb(255, 3, 54);
+}
+.kpi-card.theme-blue { --theme-color: #3b82f6;   border:1px solid #3b82f6 }
+.kpi-card.theme-green { --theme-color: #10b981;   border:1px solid #10b981 }
+.kpi-card.theme-purple { --theme-color: #8b5cf6;   border:1px solid #8b5cf6
+}
+.kpi-card.theme-orange { --theme-color: #f59e0b;   border:1px solid #f59e0b
+ }
+.kpi-card.theme-slate { --theme-color: #64748b;   border:1px solid #64748b}
+
+/* Border Fill Effect Container */
+.kpi-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 1.5rem;
+  padding: 2px; /* Border thickness */
+  background: transparent;
+  -webkit-mask: 
+     linear-gradient(#fff 0 0) content-box, 
+     linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  transition: all 0.4s ease;
+  opacity: 0;
+  z-index: 2;
+}
+
+.kpi-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  background: var(--theme-color);
+}
+
+.kpi-card:hover::before {
+  opacity: 1;
+  background: #ffffff; /* White border on colored bg */
+}
+
+.kpi-card .stat-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+  background: rgba(15, 23, 42, 0.05); /* Default icon bg */
+  color: var(--theme-color);
+  z-index: 3;
+}
+
+/* Light background version when not hovered */
+.kpi-card.theme-red .stat-icon { background: rgba(255, 3, 54, 0.1); }
+.kpi-card.theme-blue .stat-icon { background: rgba(59, 130, 246, 0.1); }
+.kpi-card.theme-green .stat-icon { background: rgba(16, 185, 129, 0.1); }
+.kpi-card.theme-purple .stat-icon { background: rgba(139, 92, 246, 0.1); }
+.kpi-card.theme-orange .stat-icon { background: rgba(245, 158, 11, 0.1); }
+.kpi-card.theme-slate .stat-icon { background: rgba(100, 116, 139, 0.1); }
+
+.kpi-card:hover .stat-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transform: rotate(10deg) scale(1.1);
+}
+
+.kpi-title {
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  transition: color 0.3s ease;
+}
+
+.kpi-value {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1;
+  transition: color 0.3s ease;
+}
+
+.kpi-card:hover .kpi-title {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.kpi-card:hover .kpi-value {
+  color: #ffffff;
+}
+
+/* Featured Top Visitor Card */
+.featured-card {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #ffffff;
+  border-radius: 2rem;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.featured-card::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 3, 54, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Charts Containers */
+.chart-container {
+  background: #ffffff;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.chart-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Pulse Animation for Live Stat */
+.pulse-indicator {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  position: relative;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.pulse-indicator::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(3); opacity: 0; }
+}
+
+/* Custom Tooltip */
+.custom-tooltip {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f1f5f9;
+}
+
+.tooltip-label {
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.tooltip-value {
+  color: rgb(255, 3, 54);
+  font-weight: 800;
+}

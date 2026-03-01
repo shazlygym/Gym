@@ -3,14 +3,19 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend
+  PieChart, Pie, Cell, Legend, LineChart, Line, AreaChart, Area
 } from "recharts";
 import {
-  FaArrowLeft, FaUsers, FaEye, FaUserCheck, FaUserTimes, FaUserSlash, FaChartBar, FaStar
+  FaArrowLeft, FaUsers, FaEye, FaUserCheck, FaUserTimes, FaUserSlash, FaChartBar, FaStar, FaClock, FaCalendarDay, FaChartLine
 } from "react-icons/fa";
+import "./Charts.css";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
-const COLORS = ["#376DB8", "#50C878", "#f59e0b", "#ff0336", "#8b5cf6", "#ec4899", "#06b6d4"];
+const COLORS = ["#376DB8", "#10b981", "#f59e0b", "#ff0336", "#8b5cf6", "#ec4899", "#06b6d4"];
+const ATTENDANCE_COLORS = [
+  "#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", 
+  "#ec4899", "#06b6d4", "#f97316", "#14b8a6", "#6366f1"
+];
 
 const Charts = () => {
   const [stats, setStats] = useState(null);
@@ -22,231 +27,380 @@ const Charts = () => {
       try {
         const res = await axios.get(`${apiUrl}/dashboardStats`);
         setStats(res.data);
-        console.log("stats", res.data);
-
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
     };
     fetchStats();
   }, []);
 
-  if (loading) return <p className="text-center p-10">جاري التحميل...</p>;
-  if (!stats) return <p className="text-center p-10">لا توجد بيانات.</p>;
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-slate-600 font-bold">جاري تحليل البيانات...</p>
+      </div>
+    </div>
+  );
 
-
+  if (!stats) return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-600 font-bold">
+      لا توجد بيانات متاحة حالياً.
+    </div>
+  );
 
   return (
-
-    <div className="p-8 bg-gray-50 min-h-screen font-cairo" dir="rtl">
+    <div className="charts-page font-cairo" dir="rtl">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+      <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
         <div>
-          <h1 className="text-3xl font-black text-gray-600 flex items-center gap-3">
-            <span className="p-2 bg-blue text-white rounded-lg shadow-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#fff">
-                <g clipPath="url(#clip0_4418_7634)">
-                  <path d="M17.79 22.7402H6.21C3.47 22.7402 1.25 20.5102 1.25 17.7702V10.3602C1.25 9.00021 2.09 7.29021 3.17 6.45021L8.56 2.25021C10.18 0.990208 12.77 0.930208 14.45 2.11021L20.63 6.44021C21.82 7.27021 22.75 9.05021 22.75 10.5002V17.7802C22.75 20.5102 20.53 22.7402 17.79 22.7402ZM9.48 3.43021L4.09 7.63021C3.38 8.19021 2.75 9.46021 2.75 10.3602V17.7702C2.75 19.6802 4.3 21.2402 6.21 21.2402H17.79C19.7 21.2402 21.25 19.6902 21.25 17.7802V10.5002C21.25 9.54021 20.56 8.21021 19.77 7.67021L13.59 3.34021C12.45 2.54021 10.57 2.58021 9.48 3.43021Z" fill="white" style={{ fill: 'var(--fillg)' }} />
-                  <path d="M7.49994 17.2495C7.30994 17.2495 7.11994 17.1795 6.96994 17.0295C6.67994 16.7395 6.67994 16.2595 6.96994 15.9695L10.1699 12.7695C10.3299 12.6095 10.5399 12.5295 10.7699 12.5495C10.9899 12.5695 11.1899 12.6895 11.3199 12.8795L12.4099 14.5195L15.9599 10.9695C16.2499 10.6795 16.7299 10.6795 17.0199 10.9695C17.3099 11.2595 17.3099 11.7395 17.0199 12.0295L12.8199 16.2295C12.6599 16.3895 12.4499 16.4695 12.2199 16.4495C11.9999 16.4295 11.7999 16.3095 11.6699 16.1195L10.5799 14.4795L8.02994 17.0295C7.87994 17.1795 7.68994 17.2495 7.49994 17.2495Z" fill="white" style={{ fill: 'var(--fillg)' }} />
-                  <path d="M16.5 14.25C16.09 14.25 15.75 13.91 15.75 13.5V12.25H14.5C14.09 12.25 13.75 11.91 13.75 11.5C13.75 11.09 14.09 10.75 14.5 10.75H16.5C16.91 10.75 17.25 11.09 17.25 11.5V13.5C17.25 13.91 16.91 14.25 16.5 14.25Z" fill="white" style={{ fill: 'var(--fillg)' }} />
-                </g>
-                <defs>
-                  <clipPath id="clip0_4418_7634">
-                    <rect width="24" height="24" fill="white" />
-                  </clipPath>
-                </defs>
-              </svg></span>
-            إحصائيات النظام
+          <h1 className="text-4xl font-black text-slate-800 flex items-center gap-4">
+            <span className="p-3 bg-red text-white rounded-2xl shadow-xl shadow-red/20">
+              <FaChartBar size={28} />
+            </span>
+            تحليلات الأداء
           </h1>
-          <p className="text-gray-500 mt-1 mr-12">نظرة شاملة على أداء النادي والمشتركين</p>
+          <p className="text-slate-500 mt-2 font-medium">نظرة استراتيجية شاملة على نشاط النادي والمشتركين</p>
         </div>
         <button
           onClick={() => navigate(-1)}
-          className="bg-white border-2 border-gray-100 px-6 py-2.5 rounded-xl shadow-sm hover:shadow-md hover:bg-gray-50 transition-all flex items-center gap-2 font-bold text-gray-700"
+          className="bg-white border border-slate-200 px-8 py-3 rounded-2xl shadow-sm hover:shadow-xl hover:translate-y-[-2px] transition-all flex items-center gap-3 font-bold text-slate-700"
         >
-          <FaArrowLeft className="text-sm" /> رجوع
+          <FaArrowLeft className="text-sm" /> رجوع للمنصة
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-10">
-        <StatCard
-          title="إجمالي المستخدمين"
-          value={stats.totalUsers}
-          icon={FaUsers}
-          gradient="from-blue to-blue"
-          shadow="shadow-blue/30"
-        />
-        <StatCard
-          title="إجمالي الزيارات"
-          value={stats.totalVisits}
-          icon={FaEye}
-          gradient="from-green to-green"
-          shadow="shadow-rose-400/30"
-        />
-        <StatCard
-          title="نشطين الآن"
-          value={stats.activeUsers}
-          icon={FaUserCheck}
-          isPulse={true}
-          gradient="from-green to-emerald-600"
-          shadow="shadow-green/30"
-        />
-        <StatCard
-          title="اشتراكات منتهية"
-          value={stats.expiredUsers}
-          icon={FaUserTimes}
-          gradient="from-red to-orange-600"
-          shadow="shadow-red/30"
-        />
-        <StatCard
-          title="لم يزوروا أبداً"
-          value={stats.neverVisitedCount}
-          icon={FaUserSlash}
-          gradient="from-gray-500 to-gray-700"
-          shadow="shadow-gray-400/30"
-        />
-        <StatCard
-          title="معدل الزيارة/فرد"
-          value={stats.avgVisitsPerUser}
-          icon={FaChartBar}
-          gradient="from-red to-black"
-          shadow="shadow-cyan-400/30"
-        />
+      <div className="max-w-[1400px] mx-auto">
+        {/* KPI Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <StatCard
+            title="إجمالي الأعضاء"
+            value={stats.totalUsers || 0}
+            icon={FaUsers}
+            themeClass="theme-red"
+          />
+          <StatCard
+            title="إجمالي الزيارات"
+            value={stats.totalVisits || 0}
+            icon={FaEye}
+            themeClass="theme-blue"
+          />
+          <StatCard
+            title="نشطين الآن"
+            value={stats.activeUsers || 0}
+            icon={FaUserCheck}
+            themeClass="theme-green"
+            isPulse={true}
+          />
+          <StatCard
+            title="اشتراكات منتهية"
+            value={stats.expiredUsers || 0}
+            icon={FaUserTimes}
+            themeClass="theme-orange"
+          />
+          <StatCard
+            title="غياب تام"
+            value={stats.neverVisitedCount || 0}
+            icon={FaUserSlash}
+            themeClass="theme-slate"
+          />
+          <StatCard
+            title="معدل الزيارات"
+            value={stats.avgVisitsPerUser || 0}
+            icon={FaChartBar}
+            themeClass="theme-purple"
+          />
 
-        <div className="bg-gradient-to-br from-blue to-indigo-900 p-8 rounded-3xl shadow-2xl text-white col-span-1 md:col-span-2 relative overflow-hidden group border border-white/10">
-          <div className="relative z-10 flex flex-col justify-between h-full">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="bg-amber-400 p-2 rounded-lg text-blue-900 shadow-lg">
-                  <FaStar size={18} />
+          {/* Featured Card */}
+          <div className="featured-card col-span-1 md:col-span-2 group">
+            <div className="relative z-10 flex flex-col justify-between h-full">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="bg-amber-400 p-2.5 rounded-xl text-slate-900 shadow-lg shadow-amber-400/20">
+                  <FaStar size={20} />
                 </div>
-                <h3 className="text-blue-100 text-sm font-bold tracking-wide uppercase">
-                  أكثر زائر تفاعلاً
+                <h3 className="text-slate-300 text-sm font-bold tracking-widest uppercase">
+                  العضو الأكثر نشاطاً
                 </h3>
               </div>
-              <p className="text-3xl font-black mt-2 leading-tight">{stats.maxVisitsUser?.name}</p>
-            </div>
-            <div className="mt-8 flex items-end justify-between">
-              <div className="flex flex-col">
-                <span className="text-5xl font-black leading-none">{stats.maxVisitsUser?.visits}</span>
-                <span className="text-sm font-medium text-blue-200 mt-1 mr-1">زيارة مسجلة</span>
+              
+              <div className="space-y-2">
+                <p className="text-4xl font-black text-white leading-tight group-hover:translate-x-[-10px] transition-transform duration-500">
+                  {stats.maxVisitsUser?.name || "-"}
+                </p>
+                <div className="flex items-end gap-6 mt-6">
+                  <div className="flex flex-col">
+                    <span className="text-6xl font-black text-white">{stats.maxVisitsUser?.visits || 0}</span>
+                    <span className="text-slate-400 font-bold mt-1">زيارة إجمالية</span>
+                  </div>
+                  <div className="bg-white/10 p-5 rounded-2xl backdrop-blur-xl border border-white/10 shadow-inner group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 mb-2">
+                    <FaUserCheck className="text-white text-4xl" />
+                  </div>
+                </div>
               </div>
-              <div className="bg-white/15 p-4 rounded-2xl backdrop-blur-xl border border-white/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                <FaUserCheck className="text-3xl" />
+            </div>
+          </div>
+        </div>
+
+        {/* Charts Section */}
+        <div className="grid lg:grid-cols-2 gap-8 mb-12">
+          {/* Package Distribution Bar Chart */}
+          <div className="chart-container">
+            <div className="chart-header">
+              <div>
+                <h2 className="chart-title">توزيع الأعضاء على الباقات</h2>
+                <p className="text-sm text-slate-500 font-medium mt-1">تصنيف المشتركين حسب نوع الباقة</p>
+              </div>
+              <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shadow-sm">
+                <FaUsers size={20} />
               </div>
             </div>
-          </div>
-          {/* Enhanced decorative elements */}
-          <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-[80px] group-hover:bg-white/15 transition-all duration-700"></div>
-          <div className="absolute -left-10 -top-10 w-48 h-48 bg-blue-400/20 rounded-full blur-[60px]"></div>
-        </div>
-      </div>
-
-      {/* الرسوم البيانية للباقات */}
-      <div className="grid lg:grid-cols-2 gap-6 mb-8">
-        {/* مخطط عدد المشتركين */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-800">عدد المشتركين لكل باقة</h2>
-            <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center">
-              <FaUsers />
+            <div className="h-[320px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={stats.packageStats || []}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis 
+                    dataKey="packageName" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#64748b', fontSize: 13, fontWeight: 600 }} 
+                    dy={15} 
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#64748b', fontSize: 13, fontWeight: 600 }} 
+                  />
+                  <Tooltip
+                    cursor={{ fill: '#f8fafc' }}
+                    content={({ active, payload, label }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="custom-tooltip">
+                            <p className="tooltip-label">{label}</p>
+                            <p className="tooltip-value">{`${payload[0].value} عضو`}</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Bar 
+                    dataKey="count" 
+                    fill="rgb(255, 3, 54)" 
+                    radius={[8, 8, 0, 0]} 
+                    barSize={45} 
+                  />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={stats.packageStats}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-              <XAxis dataKey="packageName" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} dy={10} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} />
-              <Tooltip
-                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                cursor={{ fill: '#f8fafc' }}
-              />
-              <Bar dataKey="count" fill="#376DB8" name="عدد المشتركين" radius={[6, 6, 0, 0]} barSize={40} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
 
-        {/* مخطط الدخل المالي */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-800">توزيع الدخل المالي</h2>
-            <div className="w-10 h-10 bg-green-50 text-green-600 rounded-lg flex items-center justify-center">
-              <FaChartBar />
+          {/* Revenue Pie Chart */}
+          <div className="chart-container">
+            <div className="chart-header">
+              <div>
+                <h2 className="chart-title">تحليل العوائد المالية</h2>
+                <p className="text-sm text-slate-500 font-medium mt-1">نسبة المساهمة المالية لكل باقة</p>
+              </div>
+              <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center shadow-sm">
+                <FaChartBar size={20} />
+              </div>
+            </div>
+            <div className="h-[320px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={stats.packageStats || []}
+                    dataKey="totalPrice"
+                    nameKey="packageName"
+                    cx="50%" cy="50%"
+                    innerRadius={70}
+                    outerRadius={110}
+                    paddingAngle={8}
+                  >
+                    {(stats.packageStats || []).map((_, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={COLORS[index % COLORS.length]} 
+                        stroke="none"
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="custom-tooltip">
+                            <p className="tooltip-label">{payload[0].name}</p>
+                            <p className="tooltip-value">{`${payload[0].value.toLocaleString()} جنيه`}</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Legend 
+                    verticalAlign="bottom" 
+                    height={36} 
+                    iconType="circle" 
+                    formatter={(value) => <span className="text-slate-600 font-bold text-sm">{value}</span>}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={stats.packageStats}
-                dataKey="totalPrice"
-                nameKey="packageName"
-                cx="50%" cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={5}
-              >
-                {stats.packageStats.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} strokeWidth={0} />
-                ))}
-              </Pie>
-              <Tooltip
-                formatter={(value) => [`${value} جنيه`, 'الدخل']}
-                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-              />
-              <Legend verticalAlign="bottom" height={36} iconType="circle" />
-            </PieChart>
-          </ResponsiveContainer>
         </div>
-      </div>
 
-      {/* مخطط الحضور (الساعات) */}
-      <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mb-10">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-xl font-bold text-gray-800">توزيع الحضور حسب الساعة</h2>
-            <p className="text-sm text-gray-500 mt-1">الأوقات الأكثر ازدحاماً خلال اليوم</p>
+        {/* Hourly Attendance Bar Chart */}
+        <div className="chart-container mb-8">
+          <div className="chart-header">
+            <div>
+              <h2 className="chart-title">توزيع الحضور حسب الساعة</h2>
+              <p className="text-sm text-slate-500 font-medium mt-1">تحديد ساعات الذروة لتنظيم التدريب</p>
+            </div>
+            <div className="w-14 h-14 bg-red/10 text-red rounded-2xl flex items-center justify-center shadow-sm">
+              <FaClock size={24} />
+            </div>
           </div>
-          <div className="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center">
-            <FaEye size={20} />
+          <div className="h-[400px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stats.attendanceStats || []}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis 
+                  dataKey="hour" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#64748b', fontSize: 13, fontWeight: 700 }} 
+                  dy={15}
+                />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#64748b', fontSize: 13, fontWeight: 700 }} 
+                />
+                <Tooltip
+                  cursor={{ fill: '#f8fafc' }}
+                  content={({ active, payload, label }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="custom-tooltip">
+                          <p className="tooltip-label">{`الساعة ${label}`}</p>
+                          <p className="tooltip-value">{`${payload[0].value} حاضر`}</p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Bar dataKey="attendees" radius={[10, 10, 0, 0]} barSize={50}>
+                  {(stats.attendanceStats || []).map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={ATTENDANCE_COLORS[index % ATTENDANCE_COLORS.length]} 
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={stats.attendanceStats}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-            <XAxis dataKey="hour" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} />
-            <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} />
-            <Tooltip
-              contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-              cursor={{ fill: '#fff1f2' }}
-            />
-            <Bar dataKey="attendees" fill="#ff0336" name="حضور" radius={[6, 6, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
+
+        {/* New Charts Section */}
+        <div className="grid lg:grid-cols-2 gap-8 mb-12">
+          {/* Weekly Visits Area Chart */}
+          <div className="chart-container">
+            <div className="chart-header">
+              <div>
+                <h2 className="chart-title">نشاط الزيارات الأسبوعي</h2>
+                <p className="text-sm text-slate-500 font-medium mt-1">توزيع الزيارات على مدار أيام الأسبوع</p>
+              </div>
+              <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shadow-sm">
+                <FaCalendarDay size={20} />
+              </div>
+            </div>
+            <div className="h-[320px] w-full min-h-[320px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={stats.weeklyStats && stats.weeklyStats.length > 0 ? stats.weeklyStats : [{day: 'لا يوجد', visits: 0}]}>
+                  <defs>
+                    <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 600 }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 600 }} domain={[0, 'auto']} />
+                  <Tooltip
+                    content={({ active, payload, label }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="custom-tooltip">
+                            <p className="tooltip-label">{label}</p>
+                            <p className="tooltip-value">{`${payload[0].value} زيارة`}</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Area type="monotone" dataKey="visits" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill="url(#colorVisits)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* User Growth Line Chart */}
+          <div className="chart-container">
+            <div className="chart-header">
+              <div>
+                <h2 className="chart-title">نمو قاعدة المشتركين</h2>
+                <p className="text-sm text-slate-500 font-medium mt-1">معدل تسجيل الأعضاء الجدد شهرياً</p>
+              </div>
+              <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center shadow-sm">
+                <FaChartLine size={20} />
+              </div>
+            </div>
+            <div className="h-[320px] w-full min-h-[320px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={stats.growthStats && stats.growthStats.length > 0 ? stats.growthStats : [{month: 'لا يوجد', users: 0}]}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 600 }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 600 }} domain={[0, 'auto']} />
+                  <Tooltip
+                    content={({ active, payload, label }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="custom-tooltip">
+                            <p className="tooltip-label">{label}</p>
+                            <p className="tooltip-value">{`${payload[0].value} عضو جديد`}</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Line type="stepAfter" dataKey="users" stroke="rgb(255, 3, 54)" strokeWidth={4} dot={{ r: 6, fill: 'rgb(255, 3, 54)', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 8 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-const StatCard = ({ title, value, icon: Icon, isPulse = false, gradient, shadow = "shadow-gray-200/50" }) => (
-  <div className={`bg-gradient-to-br ${gradient} p-6 rounded-3xl shadow-xl ${shadow} hover:shadow-2xl transition-all duration-500 flex items-center justify-between group relative overflow-hidden border border-white/10`}>
-    <div className="relative z-10 text-white">
-      <h3 className="text-xs font-bold text-white/80 mb-2 truncate uppercase tracking-wider">{title}</h3>
+const StatCard = ({ title, value, icon: Icon, isPulse = false, themeClass }) => (
+  <div className={`kpi-card ${themeClass}`}>
+    <div className="flex flex-col">
+      <h3 className="kpi-title">{title}</h3>
       <div className="flex items-center gap-3">
-        <p className="text-4xl font-black tracking-tight">{value}</p>
-        {isPulse && (
-          <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-white shadow-sm"></span>
-          </span>
-        )}
+        {isPulse && <span className="pulse-indicator"></span>}
+        <p className="kpi-value">{value}</p>
       </div>
     </div>
-    {Icon && (
-      <div className="relative z-10 p-4 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 text-white shadow-inner group-hover:scale-110 transition-transform duration-500 group-hover:rotate-6">
-        <Icon size={26} />
-      </div>
-    )}
-    {/* Subtle patterns for extra flair */}
-    <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all" />
+    <div className="stat-icon">
+      <Icon />
+    </div>
   </div>
 );
 

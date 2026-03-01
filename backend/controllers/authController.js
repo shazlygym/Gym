@@ -518,16 +518,74 @@ exports.getDashboardStats = async (req, res) => {
 
     // 4️⃣ الحضور حسب الساعة
     const hourCounts = {};
+    const dayCounts = { "السبت": 0, "الأحد": 0, "الاثنين": 0, "الثلاثاء": 0, "الأربعاء": 0, "الخميس": 0, "الجمعة": 0 };
+    const dayNames = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+
     allUsers.forEach(u => {
       (u.gymVisits || []).forEach(v => {
-        const hour = v.split(" ")[1]?.split(":")[0];
-        if (hour) hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+        // حساب الساعات وأيام الأسبوع باستخدام dayjs
+        try {
+          let visitDate = dayjs(v);
+          
+          if (!visitDate.isValid()) {
+             const cleanV = v.replace(",", "");
+             const parts = cleanV.split(" ");
+             if (parts[0].includes("/")) {
+                const [d, m, y] = parts[0].split("/");
+                const timeStr = parts[1] || "00:00:00";
+                visitDate = dayjs(`${y}-${m}-${d} ${timeStr}`);
+             }
+          }
+
+          if (visitDate.isValid()) {
+            // حساب الساعات
+            const hour = visitDate.hour().toString().padStart(2, "0");
+            hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+
+            // حساب أيام الأسبوع
+            const dayIndex = visitDate.day(); // 0 (Sunday) to 6 (Saturday)
+            const dayName = dayNames[dayIndex];
+            if (dayName) dayCounts[dayName]++;
+          }
+        } catch (e) { /* ignore parse errors */ }
       });
     });
 
     const attendanceStats = Object.keys(hourCounts)
       .map(h => ({ hour: h + ":00", attendees: hourCounts[h] }))
       .sort((a, b) => a.hour.localeCompare(b.hour));
+
+    const weeklyStats = Object.keys(dayCounts).map(day => ({
+      day,
+      visits: dayCounts[day]
+    }));
+
+    // 5️⃣ نمو المشتركين (حسب تاريخ التسجيل)
+    const monthNames = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+    const growthMap = {};
+
+    allUsers.forEach(u => {
+      if (u.joinDate) {
+        const d = dayjs(u.joinDate);
+        if (d.isValid()) {
+          const key = `${monthNames[d.month()]} ${d.year()}`;
+          growthMap[key] = (growthMap[key] || 0) + 1;
+        }
+      }
+    });
+
+    let growthStats = Object.keys(growthMap).map(month => ({
+      month,
+      users: growthMap[month]
+    }));
+
+    // إذا كانت البيانات فارغة، أضف الشهر الحالي بقيمة 0
+    if (growthStats.length === 0) {
+      growthStats = [{
+        month: `${monthNames[dayjs().month()]} ${dayjs().year()}`,
+        users: 0
+      }];
+    }
 
     res.json({
       totalUsers,
@@ -538,7 +596,9 @@ exports.getDashboardStats = async (req, res) => {
       maxVisitsUser,
       avgVisitsPerUser,
       packageStats,
-      attendanceStats
+      attendanceStats,
+      weeklyStats,
+      growthStats
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
