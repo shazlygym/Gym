@@ -789,11 +789,11 @@ const Dashboard = () => {
               <h2 className="text-2xl font-bold mb-6 text-gray-800">اختر رسالة</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <button
-                  onClick={() => handleSendWhatsAppMessage("مرحبا بك في ايجل جيم.")}
+                  onClick={() => handleSendWhatsAppMessage("اهلا بك في ايجل جيم🦅\nتم تفعيل اشتراكك بنجاح💙💪\nنتمني منك الالتزام الدائم لتحقيق الهدف🦅")}
                   className="bg-blue hover:bg-blue text-white px-4 py-3 rounded-lg font-bold transition"
                 >
-                  رسالة الترحيب 👋
-                  <p className="text-xs mt-2 font-normal">مرحبا بك في ايجل جيم.</p>
+                  تفعيل الاشتراك 🦅
+                  <p className="text-xs mt-2 font-normal">تم تفعيل الاشتراك بنجاح</p>
                 </button>
                 <button
                   onClick={() => handleSendWhatsAppMessage("نتمنى أن تكون بخير، لم نرك منذ فترة. نحن ننتظر عودتك!")}
@@ -810,18 +810,18 @@ const Dashboard = () => {
                   <p className="text-xs mt-2 font-normal">الاشتراك على وشك الانتهاء</p>
                 </button>
                 <button
-                  onClick={() => handleSendWhatsAppMessage("مرحبا، تم انتهاء اشتراكك. يرجى التجديد لمتابعة التدريبات.")}
+                  onClick={() => handleSendWhatsAppMessage("اهلا يا كابتن💙\nنود إفادتك بأن اشتراكك قد انتهى.\nيرجى التكرم بتجديد الاشتراك لإعادة تفعيل الحضور والاستفادة من خدماتنا.\nنرحب بعودتك في أي وقت💪")}
                   className="bg-red hover:bg-red text-white px-4 py-3 rounded-lg font-bold transition"
                 >
                   انتهاء الاشتراك ❌
                   <p className="text-xs mt-2 font-normal">انتهى الاشتراك</p>
                 </button>
                 <button
-                  onClick={() => handleSendWhatsAppMessage("شكرا لك على تجديد اشتراكك معنا! نتطلع لرؤيتك قريبا.")}
+                  onClick={() => handleSendWhatsAppMessage("اهلا يا كابتن💙💪\nتم تجديد اشتراكك بنجاح\nيسعدنا استمرارك معنا في ايجل جيم لمواصلة طموحك والوصول إلى الهدف💪")}
                   className="bg-green hover:bg-green text-white px-4 py-3 rounded-lg font-bold transition"
                 >
                   تجديد الاشتراك ✅
-                  <p className="text-xs mt-2 font-normal">شكرا على التجديد</p>
+                  <p className="text-xs mt-2 font-normal">تم تجديد اشتراكك بنجاح</p>
                 </button>
               </div>
               <button
