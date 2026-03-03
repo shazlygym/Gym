@@ -514,7 +514,7 @@ const Dashboard = () => {
           <div className="db-toolbar-filters">
             {(loggedUser?.mobileNumber === "01124045247" && loggedUser?.seq === 0) && (
               <div className="flex flex-nowrap gap-2 items-center">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">تصفية:</span>
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider hidden lg:inline">تصفية:</span>
                 <button
                   onClick={() => { setSubscriptionFilter(null); setCurrentPage(1); }}
                   className={`db-filter-btn ${subscriptionFilter === null ? "active-all" : "inactive-all"}`}
@@ -585,53 +585,52 @@ const Dashboard = () => {
         </div>
 
         <div className="hidden md:block db-table-wrap">
-          <table className="db-table">
-            <thead>
-              <tr>
-                <th className="text-right">الاسم</th>
-                <th className="text-right">الرقم التعريفي</th>
-                <th className="text-right">الهاتف</th>
-                <th className="text-right">تاريخ التسجيل</th>
-                <th className="text-center">تاريخ التجديد</th>
-                <th className="text-center">المدة</th>
-                <th className="text-center">عدد الأيام</th>
-                <th className="text-center">الأيام المستخدمة</th>
-                <th className="text-center">آخر زيارة</th>
-                <th className="text-center">انتهاء الاشتراك</th>
-                <th className="text-center">قيمة الباقة</th>
-                <th className="text-center">اسم الباقة</th>
-                <th className="text-center">الإجراءات</th>
-              </tr>
-            </thead>
+          <div className="db-table-scroll">
+            <table className="db-table">
+              <thead>
+                <tr>
+                  <th className="text-right">الاسم</th>
+                  <th className="text-right hidden lg:table-cell">الرقم التعريفي</th>
+                  <th className="text-right">الهاتف</th>
+                  <th className="text-center hidden xl:table-cell">تاريخ التسجيل</th>
+                  <th className="text-center hidden lg:table-cell">تاريخ التجديد</th>
+                  <th className="text-center hidden 2xl:table-cell">المدة</th>
+                  <th className="text-center">أيام</th>
+                  <th className="text-center hidden lg:table-cell">مستخدمة</th>
+                  <th className="text-center hidden xl:table-cell">آخر زيارة</th>
+                  <th className="text-center">الحالة</th>
+                  <th className="text-center hidden lg:table-cell">السعر</th>
+                  <th className="text-center hidden md:table-cell lg:table-cell">الباقة</th>
+                  <th className="text-center">الإجراءات</th>
+                </tr>
+              </thead>
             <tbody>
               {currentUsers.map((user) => {
                 const status = getSubscriptionStatus(user);
                 return (
                   <tr key={user._id}>
                     <td>{user.name}</td>
-                    <td className="text-center">{user.seq}</td>
-                    <td>{user.mobileNumber}</td>
-                    <td>{new Date(user.joinDate).toLocaleDateString("ar-EG")}</td>
-                    <td className="text-center">{new Date(user.renewalDate).toLocaleDateString("ar-EG")}</td>
-                    <td className="text-center">{timeAgo(user.renewalDate)}</td>
-                    <td className="text-center">{user.totalDays}</td>
-                    <td className="text-center">{user.usedDays}</td>
-                    <td className="text-center">
-                      {Array.isArray(user.gymVisits) ? user.gymVisits.at(-1) : user.gymVisits ?? "-"}
+                    <td className="text-center hidden lg:table-cell">{user.seq}</td>
+                    <td className="text-center">{user.mobileNumber}</td>
+                    <td className="text-center hidden xl:table-cell">{new Date(user.joinDate).toLocaleDateString("ar-EG")}</td>
+                    <td className="text-center hidden lg:table-cell">{new Date(user.renewalDate).toLocaleDateString("ar-EG")}</td>
+                    <td className="text-center hidden 2xl:table-cell">{timeAgo(user.renewalDate)}</td>
+                    <td className="text-center tooltip" title={`إجمالي: ${user.totalDays}`}>{user.usedDays}/{user.totalDays}</td>
+                    <td className="text-center hidden lg:table-cell">{user.usedDays}</td>
+                    <td className="text-center hidden xl:table-cell text-xs">
+                      {Array.isArray(user.gymVisits) ? (user.gymVisits.at(-1) || "-") : (user.gymVisits ?? "-")}
                     </td>
                     <td className="text-center">
                       {status === "منتهي" ? (
-                        <span className="badge badge-expired">منتهي</span>
+                        <span className="badge badge-expired badge-sm">منتهي</span>
                       ) : status === "قارب على الانتهاء" ? (
-                        <span className="badge badge-warning">قارب على الانتهاء</span>
+                        <span className="badge badge-warning badge-sm">قارب</span>
                       ) : (
-                        <span className="badge badge-active">ساري</span>
+                        <span className="badge badge-active badge-sm">ساري</span>
                       )}
                     </td>
-
-
-                    <td className="text-center">{user.packagePrice}</td>
-                    <td className="text-center">{user.packageName}</td>
+                    <td className="text-center hidden lg:table-cell text-sm">{user.packagePrice}</td>
+                    <td className="text-center hidden md:table-cell lg:table-cell text-sm">{user.packageName}</td>
                     <td>
                       <div className="flex flex-wrap justify-center gap-1.5">
                         <Link to={`/EditMember/${user._id}`}>
@@ -662,6 +661,7 @@ const Dashboard = () => {
               })}
             </tbody>
           </table>
+            </div>
         </div>
 
         <div className="md:hidden space-y-3">

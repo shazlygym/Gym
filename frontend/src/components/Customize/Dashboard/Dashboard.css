@@ -67,6 +67,22 @@
   align-items: center;
   gap: 0.5rem;
   flex: 0 0 auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+
+.db-toolbar-filters::-webkit-scrollbar {
+  height: 4px;
+}
+
+.db-toolbar-filters::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.db-toolbar-filters::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 2px;
 }
 
 .db-toolbar-search {
@@ -76,11 +92,44 @@
   max-width: 500px;
 }
 
+@media (max-width: 1024px) {
+  .db-toolbar-search {
+    flex: 1;
+    order: 1;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .db-toolbar-search {
+    order: 1;
+  }
+}
+
 .db-toolbar-actions {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   flex: 0 0 auto;
+}
+
+@media (max-width: 1024px) {
+  .db-toolbar-actions {
+    order: 2;
+    flex: 1;
+    width: 100%;
+  }
+
+  .db-toolbar-actions .db-action-btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .db-toolbar-actions {
+    order: 2;
+  }
 }
 
 /* filter buttons */
@@ -96,6 +145,7 @@
   cursor: pointer;
   transition: all 0.18s ease;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .db-filter-btn:hover {
@@ -165,6 +215,67 @@
 
 .db-filter-btn.inactive-expired:hover {
   background: #fff5f5;
+}
+
+/* 📱 Responsive filter buttons */
+@media (max-width: 1200px) {
+  .db-toolbar {
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .db-toolbar-filters {
+    gap: 0.4rem;
+    flex: 0 0 100%;
+    order: 3;
+  }
+
+  .db-filter-btn {
+    padding: 5px 10px;
+    font-size: 0.72rem;
+    gap: 3px;
+  }
+
+  .db-filter-btn span {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .db-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+  }
+
+  .db-toolbar-filters {
+    order: 3;
+    flex: 1;
+  }
+
+  .db-filter-btn {
+    padding: 4px 9px;
+    font-size: 0.68rem;
+  }
+
+  .db-filter-btn span {
+    display: none;
+  }
+
+  .db-action-btn {
+    flex: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .db-toolbar-filters {
+    gap: 0.35rem;
+  }
+
+  .db-filter-btn {
+    padding: 4px 7px;
+    font-size: 0.6rem;
+  }
 }
 
 /* ── Search bar ── */
@@ -243,6 +354,50 @@
   transform: scale(1.05);
 }
 
+/* 📱 Responsive search bar */
+@media (max-width: 1024px) {
+  .db-search-wrap {
+    height: 38px;
+    padding: 0 4px 0 14px;
+    font-size: 0.75rem;
+  }
+
+  .db-search-wrap input {
+    font-size: 0.8rem;
+  }
+
+  .db-search-wrap input::placeholder {
+    font-size: 0.75rem;
+  }
+
+  .db-search-clear {
+    padding: 4px 10px;
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .db-search-wrap {
+    height: 36px;
+    padding: 0 4px 0 12px;
+    border-radius: 8px;
+  }
+
+  .db-search-wrap .search-icon {
+    font-size: 0.85rem;
+    margin-left: 6px;
+  }
+
+  .db-search-wrap input {
+    font-size: 0.75rem;
+  }
+
+  .db-search-clear {
+    padding: 3px 8px;
+    font-size: 0.6rem;
+  }
+}
+
 /* ── Action buttons (Stats / Back) ── */
 .db-action-btn {
   display: inline-flex;
@@ -285,15 +440,24 @@
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+.db-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .db-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.82rem;
+  min-width: 100%;
 }
 
 /* head */
 .db-table thead tr {
   background: linear-gradient(135deg, #cc0029 0%, #ff0336 60%, #ff4d6d 100%);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .db-table thead th {
@@ -323,12 +487,87 @@
   padding: 10px 8px;
   color: #374151;
   vertical-align: middle;
+  font-size: 0.8rem;
 }
 
 /* name column slightly bolder */
 .db-table tbody td:first-child {
   font-weight: 600;
   color: #111827;
+}
+
+/* ── Responsive table adjustments ── */
+@media (max-width: 1200px) {
+  .db-table {
+    font-size: 0.76rem;
+  }
+
+  .db-table thead th {
+    padding: 10px 6px;
+    font-size: 0.72rem;
+  }
+
+  .db-table tbody td {
+    padding: 8px 6px;
+    font-size: 0.74rem;
+  }
+
+  .tbl-btn {
+    padding: 4px 8px;
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .db-table {
+    font-size: 0.72rem;
+  }
+
+  .db-table thead th {
+    padding: 8px 5px;
+    font-size: 0.68rem;
+  }
+
+  .db-table tbody td {
+    padding: 6px 5px;
+    font-size: 0.70rem;
+  }
+
+  .badge {
+    padding: 2px 8px;
+    font-size: 0.65rem;
+  }
+
+  .tbl-btn {
+    padding: 3px 7px;
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .db-table-scroll {
+    overflow-x: hidden;
+  }
+}
+
+/* Tooltip for mobile-friendly info */
+.tooltip {
+  cursor: help;
+  position: relative;
+}
+
+.tooltip:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 125%;
+  right: 0;
+  background: #1f2937;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  white-space: nowrap;
+  z-index: 20;
 }
 
 /* ── Status badges ── */
@@ -339,6 +578,11 @@
   font-size: 0.72rem;
   font-weight: 700;
   white-space: nowrap;
+}
+
+.badge-sm {
+  padding: 2px 8px;
+  font-size: 0.65rem;
 }
 
 .badge-expired {
